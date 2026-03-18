@@ -57,8 +57,11 @@ npm run lint      # validação estática (quando configurado)
 
 Este projeto aborda:
 
-- Definição formal do Problema do Clique em grafos não direcionados.
-- Versão de decisão: existe uma clique de tamanho k?
+- Definição formal do Problema do Clique em grafos não direcionado
+  - Clique máximo (Maior número de nós)
+  - Clique de máximo em grafo valorado (Maior peso total)
+  - K-clique máximo (Clique com k nós)
+- Versão de decisão: Qual maior clique no grafo valorado?
 - Relação com classes de complexidade (NP, NP-Completo e NP-Difícil).
 - Implementações práticas para:
 - Algoritmo exato por força bruta;
