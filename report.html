@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Problem &mdash; An&#225;lise de Cliques</title>
+  <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,sans-serif;background:#f0f2f5;color:#2d3748;line-height:1.5}
+
+    header{background:linear-gradient(135deg,#1a365d,#2b6cb0);color:#fff;padding:2rem 2rem 1.5rem;text-align:center}
+    header h1{font-size:1.8rem;font-weight:700;margin-bottom:.3rem}
+    .subtitle{opacity:.85;font-size:.9rem}
+
+    .tabs-bar{position:sticky;top:0;z-index:200;background:#fff;border-bottom:2px solid #e2e8f0;
+              display:flex;align-items:center;gap:.25rem;padding:.6rem 1.5rem;overflow-x:auto;white-space:nowrap;
+              scrollbar-width:thin;scrollbar-color:#cbd5e0 transparent}
+    .tabs-bar::-webkit-scrollbar{height:4px}
+    .tabs-bar::-webkit-scrollbar-thumb{background:#cbd5e0;border-radius:2px}
+    .tab-btn{display:inline-flex;align-items:center;gap:.35rem;padding:.45rem 1rem;border:none;
+             background:transparent;border-radius:8px;cursor:pointer;font-size:.88rem;color:#718096;
+             font-weight:500;transition:background .15s,color .15s;white-space:nowrap}
+    .tab-btn:hover{background:#f0f2f5;color:#2d3748}
+    .tab-btn.active{background:#4E79A7;color:#fff}
+    .tab-pill{display:inline-block;background:#e2e8f0;color:#2d3748;border-radius:12px;
+              padding:.05rem .5rem;font-size:.75rem;font-weight:700;min-width:1.4rem;text-align:center}
+    .tab-btn.active .tab-pill{background:rgba(255,255,255,.25);color:#fff}
+    .tab-pill.best{background:#F28E2B;color:#fff}
+    .tab-btn.active .tab-pill.best{background:rgba(255,255,255,.3)}
+    .tab-divider{width:1px;height:1.5rem;background:#e2e8f0;margin:0 .25rem;flex-shrink:0}
+
+    .tab-panel{display:none}.tab-panel.active{display:block}
+
+    .container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+    .card{background:#fff;border-radius:12px;padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 6px rgba(0,0,0,.08)}
+    .card>h2{font-size:1.2rem;color:#1a365d;margin-bottom:1.25rem}
+
+    .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+    @media(max-width:700px){.chart-row{grid-template-columns:1fr}}
+    .chart-box{background:#f7f9fc;border-radius:8px;padding:1rem}
+    .chart-box canvas{max-height:250px}
+
+    .table-scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.88rem}
+    th{background:#edf2f7;text-align:left;padding:.55rem .75rem;font-weight:600;border-bottom:2px solid #cbd5e0;white-space:nowrap}
+    td{padding:.5rem .75rem;border-bottom:1px solid #e2e8f0;vertical-align:middle}
+    tr:hover td{background:#f7fafc}
+    .rank-link{background:none;border:none;color:#4E79A7;cursor:pointer;font-size:.88rem;font-weight:500;padding:0;text-decoration:underline}
+    .rank-link:hover{color:#2b6cb0}
+
+    .users-subtitle{font-size:.83rem;color:#718096;margin-bottom:1rem}
+    .users-table .pref-th{text-align:center;font-size:.78rem;max-width:80px;overflow:hidden;text-overflow:ellipsis}
+    .pref-cell{text-align:center}
+    .pref-yes{color:#38a169;font-size:1rem;font-weight:700}
+    .pref-no{color:#cbd5e0;font-size:1rem}
+    .reach-cell{font-variant-numeric:tabular-nums;text-align:right}
+    .clique-user-row td{background:#fffaf0}
+    .clique-user-row:hover td{background:#fff3e0}
+    .user-name-cell{white-space:nowrap}
+    .in-clique-badge{background:#F28E2B;color:#fff;border-radius:10px;padding:.05rem .5rem;font-size:.7rem;font-weight:700;margin-left:.4rem;vertical-align:middle}
+
+    .cat-section{margin-bottom:0}
+    .cat-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
+    .cat-header h2{font-size:1.25rem;color:#1a365d;flex:1}
+    .rank-badge{font-size:1.4rem}
+    .clique-pill{background:#F28E2B;color:#fff;border-radius:20px;padding:.2rem .85rem;font-size:.82rem;font-weight:700}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem}
+    @media(max-width:600px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+    .stat-card{background:#f7f9fc;border-radius:8px;padding:.9rem;text-align:center;border:1px solid #e2e8f0}
+    .stat-card.accent{background:#fff8f0;border-color:#F28E2B}
+    .stat-val{display:block;font-size:1.45rem;font-weight:700;color:#2d3748}
+    .stat-card.accent .stat-val{color:#C45E00}
+    .stat-lbl{font-size:.7rem;color:#718096;text-transform:uppercase;letter-spacing:.05em}
+    .graph-legend{display:flex;flex-wrap:wrap;gap:.9rem;font-size:.8rem;color:#718096;margin-bottom:.5rem}
+    .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.3rem;vertical-align:middle}
+    .dot-clique{background:#F28E2B}.dot-regular{background:#4E79A7}
+    .line{display:inline-block;width:20px;height:3px;margin-right:.3rem;vertical-align:middle;border-radius:2px}
+    .line-clique{background:#F28E2B}
+    .line-regular{background:transparent;border-top:2px dashed #ccc;height:0}
+    .network-box{height:360px;border:1px solid #e2e8f0;border-radius:8px;background:#fafbfc;margin-bottom:1.1rem}
+    .members-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#718096;margin-bottom:.65rem}
+    .members-grid{display:flex;flex-wrap:wrap;gap:.5rem}
+    .member-card{background:#fff8f0;border:1px solid #F28E2B;border-radius:8px;padding:.45rem .85rem}
+    .member-name{display:block;font-weight:600;font-size:.86rem}
+    .member-reach{font-size:.76rem;color:#718096}
+    .no-members{color:#a0aec0;font-size:.86rem}
+
+    footer{text-align:center;padding:1.5rem;color:#a0aec0;font-size:.8rem}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>An&#225;lise de Propaga&#231;&#227;o Viral por Clique</h1>
+  <p class="subtitle">30 usu&#225;rios &middot; 5 categorias &middot; limiar = 0.60</p>
+</header>
+
+<nav class="tabs-bar" role="tablist">
+  <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')" role="tab">Vis&#227;o Geral</button>
+  <button class="tab-btn" data-tab="users" onclick="showTab('users')" role="tab">Usu&#225;rios</button>
+  <div class="tab-divider" aria-hidden="true"></div>
+  <button class="tab-btn" data-tab="animals" onclick="showTab('animals')">
+          Animals<span class="tab-pill best">4</span>
+        </button><button class="tab-btn" data-tab="technology" onclick="showTab('technology')">
+          Technology<span class="tab-pill">4</span>
+        </button><button class="tab-btn" data-tab="food" onclick="showTab('food')">
+          Food<span class="tab-pill">4</span>
+        </button><button class="tab-btn" data-tab="sports" onclick="showTab('sports')">
+          Sports<span class="tab-pill">4</span>
+        </button><button class="tab-btn" data-tab="music" onclick="showTab('music')">
+          Music<span class="tab-pill">3</span>
+        </button>
+</nav>
+
+<div class="container">
+
+  <div id="tab-overview" class="tab-panel active" role="tabpanel">
+    <section class="card">
+      <h2>Comparativo entre Categorias</h2>
+      <div class="chart-row">
+        <div class="chart-box"><canvas id="chart-clique"></canvas></div>
+        <div class="chart-box"><canvas id="chart-reach"></canvas></div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th><th>Categoria</th><th>V&#233;rtices</th><th>Arestas</th>
+              <th>Clique M&#225;x.</th><th>Alcance Total</th><th>Membros</th>
+            </tr>
+          </thead>
+          <tbody><tr>
+        <td>1</td>
+        <td><button class="rank-link" onclick="showTab('animals')">Animals</button></td>
+        <td>18</td>
+        <td>65</td>
+        <td><strong>4</strong></td>
+        <td>1.201.515</td>
+        <td>User 1, User 5, User 10, User 22</td>
+      </tr><tr>
+        <td>2</td>
+        <td><button class="rank-link" onclick="showTab('technology')">Technology</button></td>
+        <td>15</td>
+        <td>36</td>
+        <td><strong>4</strong></td>
+        <td>851.826</td>
+        <td>User 4, User 10, User 19, User 22</td>
+      </tr><tr>
+        <td>3</td>
+        <td><button class="rank-link" onclick="showTab('food')">Food</button></td>
+        <td>15</td>
+        <td>40</td>
+        <td><strong>4</strong></td>
+        <td>842.877</td>
+        <td>User 5, User 16, User 18, User 21</td>
+      </tr><tr>
+        <td>4</td>
+        <td><button class="rank-link" onclick="showTab('sports')">Sports</button></td>
+        <td>20</td>
+        <td>76</td>
+        <td><strong>4</strong></td>
+        <td>538.537</td>
+        <td>User 5, User 6, User 11, User 13</td>
+      </tr><tr>
+        <td>5</td>
+        <td><button class="rank-link" onclick="showTab('music')">Music</button></td>
+        <td>9</td>
+        <td>15</td>
+        <td><strong>3</strong></td>
+        <td>655.851</td>
+        <td>User 1, User 2, User 14</td>
+      </tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div id="tab-users" class="tab-panel" role="tabpanel">
+    <section class="card">
+    <h2>Usu&#225;rios da Inst&#226;ncia</h2>
+    <p class="users-subtitle">30 usu&#225;rios &middot; alcance total da rede: 6.119.211 &middot; linhas destacadas = membros de algum clique</p>
+    <div class="table-scroll">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Alcance</th>
+            <th class="pref-th" title="animals">Animals</th><th class="pref-th" title="sports">Sports</th><th class="pref-th" title="technology">Technology</th><th class="pref-th" title="music">Music</th><th class="pref-th" title="food">Food</th>
+          </tr>
+        </thead>
+        <tbody><tr class="clique-user-row">
+        <td>1</td>
+        <td class="user-name-cell">User 1 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">300.950</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>2</td>
+        <td class="user-name-cell">User 2 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">137.340</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr>
+        <td>3</td>
+        <td class="user-name-cell">User 3</td>
+        <td class="reach-cell">373.123</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>4</td>
+        <td class="user-name-cell">User 4 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">2.917</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>5</td>
+        <td class="user-name-cell">User 5 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">134.211</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>6</td>
+        <td class="user-name-cell">User 6 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">87.329</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr>
+        <td>7</td>
+        <td class="user-name-cell">User 7</td>
+        <td class="reach-cell">19.682</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr>
+        <td>8</td>
+        <td class="user-name-cell">User 8</td>
+        <td class="reach-cell">105.545</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr>
+        <td>9</td>
+        <td class="user-name-cell">User 9</td>
+        <td class="reach-cell">142.819</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>10</td>
+        <td class="user-name-cell">User 10 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">463.992</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>11</td>
+        <td class="user-name-cell">User 11 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">56.360</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr>
+        <td>12</td>
+        <td class="user-name-cell">User 12</td>
+        <td class="reach-cell">39.713</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>13</td>
+        <td class="user-name-cell">User 13 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">260.637</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>14</td>
+        <td class="user-name-cell">User 14 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">217.561</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr>
+        <td>15</td>
+        <td class="user-name-cell">User 15</td>
+        <td class="reach-cell">148.309</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>16</td>
+        <td class="user-name-cell">User 16 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">216.513</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr>
+        <td>17</td>
+        <td class="user-name-cell">User 17</td>
+        <td class="reach-cell">393.185</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>18</td>
+        <td class="user-name-cell">User 18 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">486.400</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>19</td>
+        <td class="user-name-cell">User 19 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">82.555</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr>
+        <td>20</td>
+        <td class="user-name-cell">User 20</td>
+        <td class="reach-cell">163.862</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>21</td>
+        <td class="user-name-cell">User 21 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">5.753</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr class="clique-user-row">
+        <td>22</td>
+        <td class="user-name-cell">User 22 <span class="in-clique-badge">clique</span></td>
+        <td class="reach-cell">302.362</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr>
+        <td>23</td>
+        <td class="user-name-cell">User 23</td>
+        <td class="reach-cell">146.454</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr>
+        <td>24</td>
+        <td class="user-name-cell">User 24</td>
+        <td class="reach-cell">286.603</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr>
+        <td>25</td>
+        <td class="user-name-cell">User 25</td>
+        <td class="reach-cell">197.933</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr>
+        <td>26</td>
+        <td class="user-name-cell">User 26</td>
+        <td class="reach-cell">447.925</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr>
+        <td>27</td>
+        <td class="user-name-cell">User 27</td>
+        <td class="reach-cell">118.468</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr>
+        <td>28</td>
+        <td class="user-name-cell">User 28</td>
+        <td class="reach-cell">85.482</td>
+        <td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td>
+      </tr><tr>
+        <td>29</td>
+        <td class="user-name-cell">User 29</td>
+        <td class="reach-cell">289.190</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr><tr>
+        <td>30</td>
+        <td class="user-name-cell">User 30</td>
+        <td class="reach-cell">406.038</td>
+        <td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-yes">&#10003;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td><td class="pref-cell"><span class="pref-no">&#8722;</span></td>
+      </tr></tbody>
+      </table>
+    </div>
+  </section>
+  </div>
+
+  <div id="tab-animals" class="tab-panel" role="tabpanel"><section class="card cat-section">
+    <div class="cat-header">
+      <span class="rank-badge">&#127945;</span>
+      <h2>Animals</h2>
+      <span class="clique-pill">Clique: 4</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">18</span><span class="stat-lbl">v&#233;rtices</span></div>
+      <div class="stat-card"><span class="stat-val">65</span><span class="stat-lbl">arestas</span></div>
+      <div class="stat-card accent"><span class="stat-val">4</span><span class="stat-lbl">clique m&#225;ximo</span></div>
+      <div class="stat-card"><span class="stat-val">1.201.515</span><span class="stat-lbl">alcance total</span></div>
+    </div>
+    <div class="graph-legend">
+      <span><span class="dot dot-clique"></span>Membro do clique</span>
+      <span><span class="dot dot-regular"></span>Fora do clique</span>
+      <span><span class="line line-clique"></span>Aresta do clique</span>
+      <span><span class="line line-regular"></span>Aresta comum</span>
+    </div>
+    <div id="net-animals" class="network-box"></div>
+    <div class="members-section">
+      <h4>Membros do Clique M&#225;ximo</h4>
+      <div class="members-grid"><div class="member-card">
+          <span class="member-name">User 1</span>
+          <span class="member-reach">300.950 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 5</span>
+          <span class="member-reach">134.211 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 10</span>
+          <span class="member-reach">463.992 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 22</span>
+          <span class="member-reach">302.362 seguidores</span>
+        </div></div>
+    </div>
+  </section></div>
+<div id="tab-technology" class="tab-panel" role="tabpanel"><section class="card cat-section">
+    <div class="cat-header">
+      <span class="rank-badge">&#129352;</span>
+      <h2>Technology</h2>
+      <span class="clique-pill">Clique: 4</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">15</span><span class="stat-lbl">v&#233;rtices</span></div>
+      <div class="stat-card"><span class="stat-val">36</span><span class="stat-lbl">arestas</span></div>
+      <div class="stat-card accent"><span class="stat-val">4</span><span class="stat-lbl">clique m&#225;ximo</span></div>
+      <div class="stat-card"><span class="stat-val">851.826</span><span class="stat-lbl">alcance total</span></div>
+    </div>
+    <div class="graph-legend">
+      <span><span class="dot dot-clique"></span>Membro do clique</span>
+      <span><span class="dot dot-regular"></span>Fora do clique</span>
+      <span><span class="line line-clique"></span>Aresta do clique</span>
+      <span><span class="line line-regular"></span>Aresta comum</span>
+    </div>
+    <div id="net-technology" class="network-box"></div>
+    <div class="members-section">
+      <h4>Membros do Clique M&#225;ximo</h4>
+      <div class="members-grid"><div class="member-card">
+          <span class="member-name">User 4</span>
+          <span class="member-reach">2.917 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 10</span>
+          <span class="member-reach">463.992 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 19</span>
+          <span class="member-reach">82.555 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 22</span>
+          <span class="member-reach">302.362 seguidores</span>
+        </div></div>
+    </div>
+  </section></div>
+<div id="tab-food" class="tab-panel" role="tabpanel"><section class="card cat-section">
+    <div class="cat-header">
+      <span class="rank-badge">&#129353;</span>
+      <h2>Food</h2>
+      <span class="clique-pill">Clique: 4</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">15</span><span class="stat-lbl">v&#233;rtices</span></div>
+      <div class="stat-card"><span class="stat-val">40</span><span class="stat-lbl">arestas</span></div>
+      <div class="stat-card accent"><span class="stat-val">4</span><span class="stat-lbl">clique m&#225;ximo</span></div>
+      <div class="stat-card"><span class="stat-val">842.877</span><span class="stat-lbl">alcance total</span></div>
+    </div>
+    <div class="graph-legend">
+      <span><span class="dot dot-clique"></span>Membro do clique</span>
+      <span><span class="dot dot-regular"></span>Fora do clique</span>
+      <span><span class="line line-clique"></span>Aresta do clique</span>
+      <span><span class="line line-regular"></span>Aresta comum</span>
+    </div>
+    <div id="net-food" class="network-box"></div>
+    <div class="members-section">
+      <h4>Membros do Clique M&#225;ximo</h4>
+      <div class="members-grid"><div class="member-card">
+          <span class="member-name">User 5</span>
+          <span class="member-reach">134.211 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 16</span>
+          <span class="member-reach">216.513 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 18</span>
+          <span class="member-reach">486.400 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 21</span>
+          <span class="member-reach">5.753 seguidores</span>
+        </div></div>
+    </div>
+  </section></div>
+<div id="tab-sports" class="tab-panel" role="tabpanel"><section class="card cat-section">
+    <div class="cat-header">
+      <span class="rank-badge">#4</span>
+      <h2>Sports</h2>
+      <span class="clique-pill">Clique: 4</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">20</span><span class="stat-lbl">v&#233;rtices</span></div>
+      <div class="stat-card"><span class="stat-val">76</span><span class="stat-lbl">arestas</span></div>
+      <div class="stat-card accent"><span class="stat-val">4</span><span class="stat-lbl">clique m&#225;ximo</span></div>
+      <div class="stat-card"><span class="stat-val">538.537</span><span class="stat-lbl">alcance total</span></div>
+    </div>
+    <div class="graph-legend">
+      <span><span class="dot dot-clique"></span>Membro do clique</span>
+      <span><span class="dot dot-regular"></span>Fora do clique</span>
+      <span><span class="line line-clique"></span>Aresta do clique</span>
+      <span><span class="line line-regular"></span>Aresta comum</span>
+    </div>
+    <div id="net-sports" class="network-box"></div>
+    <div class="members-section">
+      <h4>Membros do Clique M&#225;ximo</h4>
+      <div class="members-grid"><div class="member-card">
+          <span class="member-name">User 5</span>
+          <span class="member-reach">134.211 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 6</span>
+          <span class="member-reach">87.329 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 11</span>
+          <span class="member-reach">56.360 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 13</span>
+          <span class="member-reach">260.637 seguidores</span>
+        </div></div>
+    </div>
+  </section></div>
+<div id="tab-music" class="tab-panel" role="tabpanel"><section class="card cat-section">
+    <div class="cat-header">
+      <span class="rank-badge">#5</span>
+      <h2>Music</h2>
+      <span class="clique-pill">Clique: 3</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">9</span><span class="stat-lbl">v&#233;rtices</span></div>
+      <div class="stat-card"><span class="stat-val">15</span><span class="stat-lbl">arestas</span></div>
+      <div class="stat-card accent"><span class="stat-val">3</span><span class="stat-lbl">clique m&#225;ximo</span></div>
+      <div class="stat-card"><span class="stat-val">655.851</span><span class="stat-lbl">alcance total</span></div>
+    </div>
+    <div class="graph-legend">
+      <span><span class="dot dot-clique"></span>Membro do clique</span>
+      <span><span class="dot dot-regular"></span>Fora do clique</span>
+      <span><span class="line line-clique"></span>Aresta do clique</span>
+      <span><span class="line line-regular"></span>Aresta comum</span>
+    </div>
+    <div id="net-music" class="network-box"></div>
+    <div class="members-section">
+      <h4>Membros do Clique M&#225;ximo</h4>
+      <div class="members-grid"><div class="member-card">
+          <span class="member-name">User 1</span>
+          <span class="member-reach">300.950 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 2</span>
+          <span class="member-reach">137.340 seguidores</span>
+        </div><div class="member-card">
+          <span class="member-name">User 14</span>
+          <span class="member-reach">217.561 seguidores</span>
+        </div></div>
+    </div>
+  </section></div>
+
+</div>
+
+<footer>Gerado pelo Click Problem &mdash; An&#225;lise de Clique M&#225;ximo em Grafos de Propaga&#231;&#227;o Viral</footer>
+
+<script>
+  var netInits = {};
+  var netDone  = {};
+
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    var panel = document.getElementById('tab-' + id);
+    var btn   = document.querySelector('[data-tab="' + id + '"]');
+    if (panel) panel.classList.add('active');
+    if (btn)   btn.classList.add('active');
+    if (netInits[id] && !netDone[id]) { netDone[id] = true; netInits[id](); }
+  }
+
+  netInits['animals']=function(){
+    var c=document.getElementById('net-animals');
+    if(!c)return;
+    new vis.Network(c,{
+      nodes:new vis.DataSet([{"id":0,"label":"User 1\n300.950","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":2,"label":"User 3\n373.123","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":3,"label":"User 4\n2.917","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":4,"label":"User 5\n134.211","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":6,"label":"User 7\n19.682","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":7,"label":"User 8\n105.545","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":8,"label":"User 9\n142.819","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":9,"label":"User 10\n463.992","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":10,"label":"User 11\n56.360","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":14,"label":"User 15\n148.309","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":17,"label":"User 18\n486.400","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":21,"label":"User 22\n302.362","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":22,"label":"User 23\n146.454","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":25,"label":"User 26\n447.925","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":28,"label":"User 29\n289.190","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":29,"label":"User 30\n406.038","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":0,"to":4,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":9,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":14,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":6,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":7,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":9,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":10,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":7,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":14,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":9,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":14,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":28,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+    },{
+      physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
+      edges:{smooth:{type:'continuous'}},
+      interaction:{hover:true}
+    });
+  };
+  netInits['technology']=function(){
+    var c=document.getElementById('net-technology');
+    if(!c)return;
+    new vis.Network(c,{
+      nodes:new vis.DataSet([{"id":1,"label":"User 2\n137.340","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":3,"label":"User 4\n2.917","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":9,"label":"User 10\n463.992","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":10,"label":"User 11\n56.360","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":11,"label":"User 12\n39.713","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":15,"label":"User 16\n216.513","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":16,"label":"User 17\n393.185","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":18,"label":"User 19\n82.555","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":19,"label":"User 20\n163.862","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":21,"label":"User 22\n302.362","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":22,"label":"User 23\n146.454","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":23,"label":"User 24\n286.603","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":28,"label":"User 29\n289.190","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":1,"to":3,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":9,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":3,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":18,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":3,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":3,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":18,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":9,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":9,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":11,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":18,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":26,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+    },{
+      physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
+      edges:{smooth:{type:'continuous'}},
+      interaction:{hover:true}
+    });
+  };
+  netInits['food']=function(){
+    var c=document.getElementById('net-food');
+    if(!c)return;
+    new vis.Network(c,{
+      nodes:new vis.DataSet([{"id":3,"label":"User 4\n2.917","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":4,"label":"User 5\n134.211","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":5,"label":"User 6\n87.329","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":7,"label":"User 8\n105.545","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":9,"label":"User 10\n463.992","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":11,"label":"User 12\n39.713","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":15,"label":"User 16\n216.513","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":16,"label":"User 17\n393.185","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":17,"label":"User 18\n486.400","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":19,"label":"User 20\n163.862","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":20,"label":"User 21\n5.753","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":23,"label":"User 24\n286.603","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":3,"to":7,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":5,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":15,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":17,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":20,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":20,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":11,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":17,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":15,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":20,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":15,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":20,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":20,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":17,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":20,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":20,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":20,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":26,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+    },{
+      physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
+      edges:{smooth:{type:'continuous'}},
+      interaction:{hover:true}
+    });
+  };
+  netInits['sports']=function(){
+    var c=document.getElementById('net-sports');
+    if(!c)return;
+    new vis.Network(c,{
+      nodes:new vis.DataSet([{"id":2,"label":"User 3\n373.123","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":4,"label":"User 5\n134.211","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":5,"label":"User 6\n87.329","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":8,"label":"User 9\n142.819","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":10,"label":"User 11\n56.360","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":12,"label":"User 13\n260.637","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":13,"label":"User 14\n217.561","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":15,"label":"User 16\n216.513","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":16,"label":"User 17\n393.185","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":18,"label":"User 19\n82.555","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":19,"label":"User 20\n163.862","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":21,"label":"User 22\n302.362","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":22,"label":"User 23\n146.454","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":23,"label":"User 24\n286.603","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":25,"label":"User 26\n447.925","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":28,"label":"User 29\n289.190","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":29,"label":"User 30\n406.038","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":2,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":5,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":10,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":12,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":15,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":10,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":5,"to":12,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":5,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":15,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":12,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":10,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":15,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":26,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":27,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":28,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+    },{
+      physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
+      edges:{smooth:{type:'continuous'}},
+      interaction:{hover:true}
+    });
+  };
+  netInits['music']=function(){
+    var c=document.getElementById('net-music');
+    if(!c)return;
+    new vis.Network(c,{
+      nodes:new vis.DataSet([{"id":0,"label":"User 1\n300.950","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":1,"label":"User 2\n137.340","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":5,"label":"User 6\n87.329","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":6,"label":"User 7\n19.682","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":13,"label":"User 14\n217.561","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":17,"label":"User 18\n486.400","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":22,"label":"User 23\n146.454","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":0,"to":1,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":5,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":13,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":6,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":13,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":1,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":6,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+    },{
+      physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
+      edges:{smooth:{type:'continuous'}},
+      interaction:{hover:true}
+    });
+  };
+
+  new Chart(document.getElementById('chart-clique'), {
+    type: 'bar',
+    data: {
+      labels: ["animals","technology","food","sports","music"],
+      datasets: [{ label: 'Clique Máximo', data: [4,4,4,4,3],
+        backgroundColor: '#4E79A7cc', borderColor: '#4E79A7', borderWidth: 2, borderRadius: 6 }]
+    },
+    options: {
+      responsive: true,
+      onClick: function(_e, els) { if (els.length) showTab(["animals","technology","food","sports","music"][els[0].index].toLowerCase().replace(/[^a-z0-9]+/g,'-')); },
+      plugins: { title: { display: true, text: 'Clique Máximo por Categoria', font: { size: 14 } }, legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }, title: { display: true, text: 'Nº de membros' } } }
+    }
+  });
+
+  new Chart(document.getElementById('chart-reach'), {
+    type: 'bar',
+    data: {
+      labels: ["animals","technology","food","sports","music"],
+      datasets: [{ label: 'Alcance Agregado', data: [1201515,851826,842877,538537,655851],
+        backgroundColor: '#F28E2Bcc', borderColor: '#F28E2B', borderWidth: 2, borderRadius: 6 }]
+    },
+    options: {
+      responsive: true,
+      onClick: function(_e, els) { if (els.length) showTab(["animals","technology","food","sports","music"][els[0].index].toLowerCase().replace(/[^a-z0-9]+/g,'-')); },
+      plugins: { title: { display: true, text: 'Alcance Agregado do Clique', font: { size: 14 } }, legend: { display: false } },
+      scales: { y: { beginAtZero: true, title: { display: true, text: 'Seguidores totais' } } }
+    }
+  });
+</script>
+
+</body>
+</html>
