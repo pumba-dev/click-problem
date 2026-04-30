@@ -75,13 +75,13 @@ graph TD
 
     subgraph models["models/"]
         mdl["models.ts<br/><i>interfaces TypeScript</i>"]
+        gph["graph.ts<br/><i>Graph</i>"]
     end
 
     subgraph services["services/"]
         gen["generator.ts<br/><i>InstanceGenerator</i>"]
         ana["analyzer.ts<br/><i>ViralAnalyzer</i>"]
         slv["solver.ts<br/><i>CliqueSolver</i>"]
-        gph["graph.ts<br/><i>Graph</i>"]
     end
 
     subgraph reports["reports/"]
@@ -163,7 +163,9 @@ O arquivo `report.html` gerado contém:
 | --- | --- |
 | **Visão Geral** | Gráficos de barras comparando tamanho do clique e alcance por categoria |
 | **Usuários** | Tabela com todos os usuários, seguidores e preferências por categoria |
+| **Interações** | Grafo global de todos os usuários com arestas coloridas pelo score de interação |
 | **`<Categoria>`** | Grafo interativo (vis.js) com membros do clique destacados em laranja |
+| **Estatísticas** | Metadados da simulação (seed, config), tempos de processamento por fase, densidade da rede e esforço computacional do solver por categoria |
 
 Nos grafos: nós **laranja** = membros do clique máximo; nós **azuis** = demais usuários elegíveis. Arestas laranjas conectam membros do clique entre si.
 
@@ -177,19 +179,19 @@ src/
 ├── config/
 │   └── config.ts            Configurações da simulação — edite aqui
 ├── models/
-│   └── models.ts            Interfaces TypeScript (User, ProblemInstance, etc.)
+│   ├── models.ts            Interfaces TypeScript (User, ProblemInstance, SimulationStats, etc.)
+│   └── graph.ts             Graph — lista de adjacência com sets
 ├── services/
 │   ├── generator.ts         InstanceGenerator — geração aleatória reprodutível (PRNG Mulberry32)
 │   ├── analyzer.ts          ViralAnalyzer — constrói grafos, executa solver e rankeia
-│   ├── solver.ts            CliqueSolver — força bruta com early exit
-│   ├── graph.ts             Graph — lista de adjacência com sets
-│   └── __tests__/           Testes unitários (vitest)
-│       ├── graph.test.ts
-│       ├── solver.test.ts
-│       ├── generator.test.ts
-│       └── analyzer.test.ts
-└── reports/
-    └── report.ts            ReportGenerator — gera o relatório HTML interativo
+│   └── solver.ts            CliqueSolver — força bruta com early exit; retorna clique + combinationsTested
+├── reports/
+│   └── report.ts            ReportGenerator — gera o relatório HTML e compila SimulationStats
+└── __tests__/               Testes unitários (vitest)
+    ├── graph.test.ts
+    ├── solver.test.ts
+    ├── generator.test.ts
+    └── analyzer.test.ts
 ```
 
 ---

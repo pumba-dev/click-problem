@@ -24,7 +24,7 @@ export const simulationConfig: GeneratorOptions = {
    * Keep below ~25 for fast results; the brute-force solver is O(2^n · n²).
    * Default: 30
    */
-  numUsers: 50,
+  numUsers: 30,
 
   // ── Categories ───────────────────────────────────────────────────────────
   /**
@@ -56,7 +56,7 @@ export const simulationConfig: GeneratorOptions = {
    *
    * Default: 0.6
    */
-  threshold: 0.25,
+  threshold: 0.6,
 
   // ── Follower reach range ──────────────────────────────────────────────────
   /**

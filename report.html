@@ -114,6 +114,8 @@
         </button><button class="tab-btn" data-tab="music" onclick="showTab('music')">
           Music<span class="tab-pill">3</span>
         </button>
+  <div class="tab-divider" aria-hidden="true"></div>
+  <button class="tab-btn" data-tab="estatisticas" onclick="showTab('estatisticas')" role="tab">Estat&#237;sticas</button>
 </nav>
 
 <div class="container">
@@ -548,6 +550,94 @@
     </div>
   </section></div>
 
+  <div id="tab-estatisticas" class="tab-panel" role="tabpanel">
+    <div class="container" style="padding:0">
+      <section class="card">
+    <h2>Metadados da Simula&#231;&#227;o</h2>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val" style="font-size:1rem">30/04/2026, 01:58:22</span><span class="stat-lbl">data / hora</span></div>
+      <div class="stat-card"><span class="stat-val">42</span><span class="stat-lbl">seed (PRNG)</span></div>
+      <div class="stat-card"><span class="stat-val">30</span><span class="stat-lbl">usu&#225;rios</span></div>
+      <div class="stat-card"><span class="stat-val">5</span><span class="stat-lbl">categorias</span></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">0.60</span><span class="stat-lbl">limiar (threshold)</span></div>
+      <div class="stat-card"><span class="stat-val">50%</span><span class="stat-lbl">prob. prefer&#234;ncia</span></div>
+      <div class="stat-card" style="grid-column:span 2"><span class="stat-val" style="font-size:1rem">1.000 – 500.000</span><span class="stat-lbl">alcance m&#237;n – m&#225;x (seguidores)</span></div>
+    </div>
+    <p class="users-subtitle" style="margin-top:.5rem">Categorias: animals, sports, technology, music, food</p>
+  </section>
+
+  <section class="card">
+    <h2>Desempenho de Processamento</h2>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">0.528 ms</span><span class="stat-lbl">gera&#231;&#227;o da inst&#226;ncia</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">1188.845 ms</span><span class="stat-lbl">an&#225;lise (todas categorias)</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">2.718 ms</span><span class="stat-lbl">gera&#231;&#227;o do relat&#243;rio</span></div>
+      <div class="stat-card accent"><span class="stat-val" style="font-size:1.1rem">1192.091 ms</span><span class="stat-lbl">tempo total</span></div>
+    </div>
+    <div class="chart-box" style="max-width:640px;margin-top:.5rem">
+      <canvas id="chart-timing"></canvas>
+    </div>
+    <div class="table-scroll" style="margin-top:1rem">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th style="text-align:right">Tempo Solver (ms)</th>
+            <th style="text-align:right">Subconjuntos Testados</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+          <td>Animals</td>
+          <td class="reach-cell">233.650</td>
+          <td class="reach-cell">258.361</td>
+        </tr><tr>
+          <td>Technology</td>
+          <td class="reach-cell">19.823</td>
+          <td class="reach-cell">31.231</td>
+        </tr><tr>
+          <td>Food</td>
+          <td class="reach-cell">24.584</td>
+          <td class="reach-cell">31.402</td>
+        </tr><tr>
+          <td>Sports</td>
+          <td class="reach-cell">891.285</td>
+          <td class="reach-cell">1.043.366</td>
+        </tr><tr>
+          <td>Music</td>
+          <td class="reach-cell">0.181</td>
+          <td class="reach-cell">385</td>
+        </tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Estat&#237;sticas do Grafo de Intera&#231;&#245;es</h2>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">435</span><span class="stat-lbl">pares poss&#237;veis C(n,2)</span></div>
+      <div class="stat-card accent"><span class="stat-val">183</span><span class="stat-lbl">conex&#245;es acima do limiar</span></div>
+      <div class="stat-card"><span class="stat-val">42.1%</span><span class="stat-lbl">densidade da rede</span></div>
+      <div class="stat-card"><span class="stat-val">0.60</span><span class="stat-lbl">limiar aplicado</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Esfor&#231;o Computacional (Solver)</h2>
+    <div class="stats-row">
+      <div class="stat-card accent"><span class="stat-val">1.364.745</span><span class="stat-lbl">subconjuntos testados (total)</span></div>
+      <div class="stat-card"><span class="stat-val">3.80</span><span class="stat-lbl">tamanho m&#233;dio de clique</span></div>
+      <div class="stat-card"><span class="stat-val">4</span><span class="stat-lbl">maior clique</span></div>
+      <div class="stat-card"><span class="stat-val">3</span><span class="stat-lbl">menor clique</span></div>
+    </div>
+    <div class="stats-row" style="grid-template-columns:1fr">
+      <div class="stat-card accent"><span class="stat-val">Animals</span><span class="stat-lbl">categoria com maior alcance agregado</span></div>
+    </div>
+  </section>
+    </div>
+  </div>
+
 </div>
 
 <footer>Gerado pelo Click Problem &mdash; An&#225;lise de Clique M&#225;ximo em Grafos de Propaga&#231;&#227;o Viral</footer>
@@ -668,6 +758,30 @@
       onClick: function(_e, els) { if (els.length) showTab(["animals","technology","food","sports","music"][els[0].index].toLowerCase().replace(/[^a-z0-9]+/g,'-')); },
       plugins: { title: { display: true, text: 'Alcance Agregado do Clique', font: { size: 14 } }, legend: { display: false } },
       scales: { y: { beginAtZero: true, title: { display: true, text: 'Seguidores totais' } } }
+    }
+  });
+
+  new Chart(document.getElementById('chart-timing'), {
+    type: 'bar',
+    data: {
+      labels: ["Animals","Technology","Food","Sports","Music"],
+      datasets: [{
+        label: 'Tempo do solver (ms)',
+        data: [233.65,19.823,24.584,891.285,0.181],
+        backgroundColor: '#4E79A7cc',
+        borderColor: '#4E79A7',
+        borderWidth: 2,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'Tempo do Solver por Categoria (ms)', font: { size: 14 } },
+        legend: { display: false }
+      },
+      scales: { x: { beginAtZero: true, title: { display: true, text: 'Milissegundos' } } }
     }
   });
 </script>

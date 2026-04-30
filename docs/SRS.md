@@ -149,13 +149,16 @@ O Click Problem é um sistema de linha de comando (CLI) independente, sem depend
 |---|---|
 | Visão Geral | Tabela de ranking + dois gráficos de barras (Chart.js): clique máximo e alcance por categoria |
 | Usuários | Tabela com todos os usuários, alcance e preferências; linhas de membros de clique destacadas |
+| Interações | Grafo global de todos os usuários com arestas coloridas pelo score de interação |
 | `<Categoria>` (uma por categoria) | Grafo interativo (vis.js), stat cards, legenda e lista de membros do clique |
+| Estatísticas | Metadados da execução (seed, config), tempos por fase (geração, análise, relatório, total), estatísticas do grafo de interações e esforço computacional do solver por categoria |
 
 **Critério de aceite:**
 - Nós do clique são exibidos em laranja; demais em azul.
 - Arestas do clique são contínuas e laranja; demais são tracejadas e cinza.
 - Redes vis.js são inicializadas de forma lazy (apenas na primeira exibição da aba).
 - O clique em um item da tabela de ranking navega para a aba da categoria correspondente.
+- A aba Estatísticas exibe `reportTimeMs` e `totalTimeMs` corretamente medidos (não zero).
 
 ---
 
@@ -190,9 +193,10 @@ O Click Problem é um sistema de linha de comando (CLI) independente, sem depend
 ```
 src/
 ├── config/      — configuração da simulação
-├── models/      — contratos de dados (interfaces TypeScript)
-├── services/    — lógica de negócio (generator, analyzer, solver, graph)
-└── reports/     — geração de saída (HTML)
+├── models/      — contratos de dados (interfaces TypeScript) e estrutura Graph
+├── services/    — lógica de negócio (generator, analyzer, solver)
+├── reports/     — geração de saída (HTML) e compilação de estatísticas
+└── __tests__/   — testes unitários (vitest)
 ```
 
 ---
@@ -285,3 +289,4 @@ O usuário interage com o sistema exclusivamente por meio do arquivo `src/config
 | Versão | Data | Descrição |
 |---|---|---|
 | 1.0 | 2026-04-29 | Versão inicial — cobre todos os requisitos da implementação atual |
+| 1.1 | 2026-04-30 | Adição da aba Estatísticas (RF-07); movimentação de `Graph` para `src/models/`; `CliqueSolver.solve()` passa a retornar `SolveResult`; novos tipos `SimulationStats`, `CategoryTimingEntry`; `ReportGenerator.buildStats()` centraliza cálculo de métricas |
