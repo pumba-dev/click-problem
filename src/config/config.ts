@@ -1,4 +1,4 @@
-import type { GeneratorOptions } from "./models.js";
+import type { GeneratorOptions } from "../models/models.js";
 
 /**
  * Simulation configuration for the Click Problem analysis.

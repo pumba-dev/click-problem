@@ -1,6 +1,6 @@
 import { Graph } from "./graph.js";
 import { CliqueSolver } from "./solver.js";
-import type { ProblemInstance, GraphNodeData, GraphEdgeData, CategoryResult } from "./models.js";
+import type { ProblemInstance, GraphNodeData, GraphEdgeData, CategoryResult } from "../models/models.js";
 
 export type { CategoryResult };
 

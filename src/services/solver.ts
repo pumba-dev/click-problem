@@ -26,7 +26,10 @@ export class CliqueSolver {
    * Usa backtracking recursivo; aloca apenas o caminho atual na pilha — O(k) de espaço.
    */
   private static *combinations(arr: number[], k: number): Generator<number[]> {
-    if (k === 0) { yield []; return; }
+    if (k === 0) {
+      yield [];
+      return;
+    }
     for (let i = 0; i <= arr.length - k; i++) {
       for (const rest of CliqueSolver.combinations(arr.slice(i + 1), k - 1)) {
         yield [arr[i], ...rest];

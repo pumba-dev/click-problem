@@ -51,23 +51,23 @@ export interface GraphEdgeData {
 /** Parâmetros opcionais para controlar a geração de instâncias aleatórias. */
 export interface GeneratorOptions {
   /** Número de usuários a gerar. Padrão: 30. */
-  numUsers?: number;
+  numUsers: number;
   /** Lista de categorias de interesse. Padrão: ["animals", "sports", "technology", "music", "food"]. */
-  categories?: string[];
+  categories: string[];
   /** Probabilidade de um usuário gostar de cada categoria. Padrão: 0.5. */
-  prefProb?: number;
+  prefProb: number;
   /** Limiar mínimo de score de interação para criar uma aresta em G_a. Padrão: 0.6. */
-  threshold?: number;
+  threshold: number;
   /** Alcance mínimo (seguidores) de um usuário. Padrão: 1.000. */
-  reachLow?: number;
+  reachLow: number;
   /** Alcance máximo (seguidores) de um usuário. Padrão: 500.000. */
-  reachHigh?: number;
+  reachHigh: number;
   /**
    * Semente do PRNG para reprodutibilidade.
    * A mesma seed sempre produz a mesma instância, independente da ordem de chamadas.
    * Padrão: 42.
    */
-  seed?: number;
+  seed: number;
 }
 
 /**

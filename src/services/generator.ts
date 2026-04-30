@@ -1,4 +1,4 @@
-import type { ProblemInstance, User, GeneratorOptions } from "./models.js";
+import type { ProblemInstance, User, GeneratorOptions } from "../models/models.js";
 
 /**
  * Gerador de instâncias aleatórias reprodutíveis do problema do clique.
@@ -40,15 +40,15 @@ export class InstanceGenerator {
    * Os grafos G_a são construídos por `ViralAnalyzer` usando o `threshold`
    * para decidir quais pares formam arestas.
    */
-  generate(options: GeneratorOptions = {}): ProblemInstance {
+  generate(options: GeneratorOptions): ProblemInstance {
     const {
-      numUsers = 30,
-      categories = ["animals", "sports", "technology", "music", "food"],
-      prefProb = 0.5,
-      threshold = 0.6,
-      reachLow = 1_000,
-      reachHigh = 500_000,
-      seed = 42,
+      numUsers,
+      categories,
+      prefProb,
+      threshold,
+      reachLow,
+      reachHigh,
+      seed,
     } = options;
 
     const rand = InstanceGenerator.rand(seed);
@@ -57,7 +57,9 @@ export class InstanceGenerator {
       id: i,
       name: `User ${i + 1}`,
       reach: Math.floor(rand() * (reachHigh - reachLow)) + reachLow,
-      preferences: Object.fromEntries(categories.map((c) => [c, rand() < prefProb])),
+      preferences: Object.fromEntries(
+        categories.map((c) => [c, rand() < prefProb]),
+      ),
     }));
 
     const interactions = new Map<string, number>();

@@ -1,7 +1,7 @@
-import { InstanceGenerator } from "./generator.js";
-import { ViralAnalyzer } from "./analyzer.js";
-import { ReportGenerator } from "./report.js";
-import { simulationConfig, reportOutputPath } from "./config.js";
+import { InstanceGenerator } from "./services/generator.js";
+import { ViralAnalyzer } from "./services/analyzer.js";
+import { ReportGenerator } from "./reports/report.js";
+import { simulationConfig, reportOutputPath } from "./config/config.js";
 
 function main(): void {
   const instance = new InstanceGenerator().generate(simulationConfig);
