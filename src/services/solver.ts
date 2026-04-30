@@ -12,7 +12,7 @@ export class CliqueSolver {
    * Um clique é um subgrafo completo: todo par deve estar conectado.
    * Complexidade: O(k²) onde k = |subset|.
    */
-  private static isClique(graph: Graph, subset: number[]): boolean {
+  static isClique(graph: Graph, subset: number[]): boolean {
     for (let i = 0; i < subset.length; i++) {
       for (let j = i + 1; j < subset.length; j++) {
         if (!graph.hasEdge(subset[i], subset[j])) return false;
@@ -25,7 +25,7 @@ export class CliqueSolver {
    * Gerador lazy de todas as combinações de tamanho k do array arr.
    * Usa backtracking recursivo; aloca apenas o caminho atual na pilha — O(k) de espaço.
    */
-  private static *combinations(arr: number[], k: number): Generator<number[]> {
+  static *combinations(arr: number[], k: number): Generator<number[]> {
     if (k === 0) {
       yield [];
       return;
