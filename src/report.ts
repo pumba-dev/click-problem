@@ -169,6 +169,101 @@ export class ReportGenerator {
   </section>`;
   }
 
+  private static buildInteractionsNetworkFn(instance: ProblemInstance): string {
+    const maxReach = Math.max(...instance.users.map((u) => u.reach));
+    const visNodes = instance.users.map((u) => {
+      const t = maxReach > 0 ? u.reach / maxReach : 0;
+      const r = Math.round(219 + (30 - 219) * t);
+      const g = Math.round(191 + (64 - 191) * t);
+      const b = Math.round(254 + (175 - 254) * t);
+      const bg = `rgb(${r},${g},${b})`;
+      return {
+        id: u.id,
+        label: u.name,
+        title: `${u.name}\n${ReportGenerator.fmtN(u.reach)} seguidores`,
+        color: {
+          background: bg,
+          border: "#1e40af",
+          highlight: { background: "#93c5fd", border: "#1e3a8a" },
+        },
+        font: { color: t > 0.55 ? "#fff" : "#1e3748", size: 12 },
+        size: 20,
+      };
+    });
+
+    const visEdges = Array.from(instance.interactions.entries()).map(([key, score]) => {
+      const [from, to] = key.split(",").map(Number);
+      const pct = Math.round(score * 100);
+      const er = Math.round(226 + (242 - 226) * score);
+      const eg = Math.round(232 + (142 - 232) * score);
+      const eb = Math.round(240 + (43 - 240) * score);
+      const edgeColor = `rgb(${er},${eg},${eb})`;
+      const aboveThreshold = score >= instance.threshold;
+      return {
+        from,
+        to,
+        label: `${pct}%`,
+        width: 1 + score * 5,
+        dashes: !aboveThreshold,
+        color: {
+          color: edgeColor,
+          opacity: 0.3 + score * 0.7,
+          highlight: aboveThreshold ? "#e11d48" : edgeColor,
+        },
+        font: { size: 9, color: "#718096", align: "middle", strokeWidth: 0 },
+      };
+    });
+
+    return `netInits['interactions']=function(){
+  var c=document.getElementById('net-interactions');
+  if(!c)return;
+  new vis.Network(c,{
+    nodes:new vis.DataSet(${JSON.stringify(visNodes)}),
+    edges:new vis.DataSet(${JSON.stringify(visEdges)})
+  },{
+    physics:{barnesHut:{gravitationalConstant:-8000,springLength:160,centralGravity:0.2,springConstant:0.04,damping:0.09},stabilization:{iterations:300,fit:true}},
+    edges:{smooth:{type:'continuous'},font:{size:9,color:'#718096',align:'middle',strokeWidth:0}},
+    nodes:{borderWidth:1},
+    interaction:{hover:true,tooltipDelay:150},
+    layout:{improvedLayout:true}
+  });
+};`;
+  }
+
+  private static buildInteractionsSection(instance: ProblemInstance): string {
+    const scores = Array.from(instance.interactions.values());
+    const totalPairs = scores.length;
+    const mean = totalPairs > 0 ? scores.reduce((s, v) => s + v, 0) / totalPairs : 0;
+    const sorted = [...scores].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    const median =
+      sorted.length === 0
+        ? 0
+        : sorted.length % 2 === 1
+          ? sorted[mid]
+          : (sorted[mid - 1] + sorted[mid]) / 2;
+    const aboveThreshold = scores.filter((v) => v >= instance.threshold).length;
+
+    return `<section class="card">
+    <h2>Grafo de Intera&#231;&#245;es entre Usu&#225;rios</h2>
+    <p class="users-subtitle">${totalPairs} pares &middot; limiar = ${instance.threshold.toFixed(2)} &middot; espessura e cor da aresta proporcionais ao score</p>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">${totalPairs}</span><span class="stat-lbl">pares totais</span></div>
+      <div class="stat-card"><span class="stat-val">${Math.round(mean * 100)}%</span><span class="stat-lbl">m&#233;dia</span></div>
+      <div class="stat-card"><span class="stat-val">${Math.round(median * 100)}%</span><span class="stat-lbl">mediana</span></div>
+      <div class="stat-card accent"><span class="stat-val">${aboveThreshold}</span><span class="stat-lbl">acima do limiar</span></div>
+    </div>
+    <div class="graph-legend">
+      <span><span class="dot" style="background:#1e40af"></span>Alto alcance</span>
+      <span><span class="dot" style="background:#dbeafe;border:1px solid #93c5fd"></span>Baixo alcance</span>
+      <span><span class="line" style="background:#F28E2B"></span>Score alto</span>
+      <span><span class="line" style="background:#e2e8f0"></span>Score baixo</span>
+      <span><span class="line line-regular"></span>Abaixo do limiar</span>
+    </div>
+    <div id="net-interactions" class="network-box network-box--tall"></div>
+  </section>`;
+  }
+
   /**
    * Gera e salva o relatório HTML completo em `outputPath`.
    *
@@ -219,6 +314,7 @@ export class ReportGenerator {
       .join("\n");
 
     const networkFns = ranked.map((r) => ReportGenerator.buildNetworkFn(r)).join("\n  ");
+    const interactionsNetworkFn = ReportGenerator.buildInteractionsNetworkFn(instance);
 
     const html = `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -302,6 +398,7 @@ export class ReportGenerator {
     .line-clique{background:#F28E2B}
     .line-regular{background:transparent;border-top:2px dashed #ccc;height:0}
     .network-box{height:360px;border:1px solid #e2e8f0;border-radius:8px;background:#fafbfc;margin-bottom:1.1rem}
+    .network-box--tall{height:480px}
     .members-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#718096;margin-bottom:.65rem}
     .members-grid{display:flex;flex-wrap:wrap;gap:.5rem}
     .member-card{background:#fff8f0;border:1px solid #F28E2B;border-radius:8px;padding:.45rem .85rem}
@@ -322,6 +419,7 @@ export class ReportGenerator {
 <nav class="tabs-bar" role="tablist">
   <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')" role="tab">Vis&#227;o Geral</button>
   <button class="tab-btn" data-tab="users" onclick="showTab('users')" role="tab">Usu&#225;rios</button>
+  <button class="tab-btn" data-tab="interactions" onclick="showTab('interactions')" role="tab">Intera&#231;&#245;es</button>
   <div class="tab-divider" aria-hidden="true"></div>
   ${catTabBtns}
 </nav>
@@ -353,6 +451,10 @@ export class ReportGenerator {
     ${ReportGenerator.buildUsersTable(instance, cliqueUserIds)}
   </div>
 
+  <div id="tab-interactions" class="tab-panel" role="tabpanel">
+    ${ReportGenerator.buildInteractionsSection(instance)}
+  </div>
+
   ${catPanels}
 
 </div>
@@ -374,6 +476,7 @@ export class ReportGenerator {
   }
 
   ${networkFns}
+  ${interactionsNetworkFn}
 
   new Chart(document.getElementById('chart-clique'), {
     type: 'bar',
