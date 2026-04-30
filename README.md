@@ -5,7 +5,7 @@
 ![GitHub forks](https://img.shields.io/github/forks/pumba-dev/click-problem?style=for-the-badge)
 ![GitHub issues](https://img.shields.io/github/issues/pumba-dev/click-problem?style=for-the-badge)
 
-> Ferramenta educacional para explorar o **Problema do Clique Máximo** aplicado a redes sociais. Dado um conjunto de usuários com interesses em comuns, o sistema encontra o maior grupo coeso (clique) em cada categoria de conteúdo e rankeia as melhores oportunidades de seed viral — gerando um relatório HTML interativo com grafos e gráficos comparativos.
+> Ferramenta educacional para explorar o **Problema do Clique Máximo** aplicado a redes sociais. Dado um conjunto de usuários com interesses em comum, o sistema encontra o maior grupo coeso (clique) em cada categoria de conteúdo e rankeia as melhores oportunidades de seed viral — gerando um relatório HTML interativo com grafos e gráficos comparativos.
 
 ---
 
@@ -16,8 +16,8 @@ Um **clique** em um grafo é um subconjunto de vértices onde todos se conectam 
 Neste projeto, o problema é modelado assim:
 
 - Cada **usuário** é um vértice com categorias de interesse e número de seguidores.
-- Dois usuários são conectados por uma **aresta** quando o score de interação entre as redes deles supera um limiar configurável.
-- O algoritmo encontra o maior clique em cada categoria: o grupo de usuários mais coeso para um seed viral.
+- Dois usuários são conectados por uma **aresta** quando o score de interação entre eles supera um limiar configurável.
+- O algoritmo encontra o maior clique em cada categoria: o grupo mais coeso para um seed viral.
 
 ---
 
@@ -41,16 +41,89 @@ npm install
 ## Uso
 
 ```bash
-npm start
+npm start        # executa a simulação e gera report.html
+npm test         # roda a suíte de testes unitários
+npm run build    # compila TypeScript para dist/
 ```
 
-Isso executa a simulação com os parâmetros definidos em `src/config.ts`, imprime o ranking no terminal e gera o arquivo `report.html` na raiz do projeto. Abra esse arquivo em qualquer navegador para ver os grafos interativos e gráficos comparativos.
+`npm start` executa a simulação com os parâmetros de `src/config/config.ts`, imprime o ranking no terminal e gera `report.html` na raiz. Abra esse arquivo em qualquer navegador para ver os grafos interativos e gráficos comparativos.
+
+---
+
+## Como funciona
+
+### Visão geral do fluxo
+
+```mermaid
+flowchart LR
+    A["⚙️ config.ts<br/>simulationConfig"] -->|GeneratorOptions| B["🏭 InstanceGenerator<br/>.generate()"]
+    B -->|ProblemInstance| C["🔬 ViralAnalyzer<br/>.analyze()"]
+    C -->|CategoryResult| D["🖨️ printResults()"]
+    C -->|CategoryResult| E["📄 ReportGenerator<br/>.generate()"]
+    E --> F["🌐 report.html"]
+```
+
+### Arquitetura de módulos
+
+```mermaid
+graph TD
+    main["main.ts"]
+
+    subgraph config["config/"]
+        cfg["config.ts"]
+    end
+
+    subgraph models["models/"]
+        mdl["models.ts<br/><i>interfaces TypeScript</i>"]
+    end
+
+    subgraph services["services/"]
+        gen["generator.ts<br/><i>InstanceGenerator</i>"]
+        ana["analyzer.ts<br/><i>ViralAnalyzer</i>"]
+        slv["solver.ts<br/><i>CliqueSolver</i>"]
+        gph["graph.ts<br/><i>Graph</i>"]
+    end
+
+    subgraph reports["reports/"]
+        rep["report.ts<br/><i>ReportGenerator</i>"]
+    end
+
+    main --> cfg
+    main --> gen
+    main --> ana
+    main --> rep
+
+    cfg --> mdl
+    gen --> mdl
+    ana --> mdl
+    ana --> slv
+    ana --> gph
+    slv --> gph
+    rep --> mdl
+```
+
+### Pipeline interno do ViralAnalyzer
+
+```mermaid
+flowchart TD
+    A[ProblemInstance] --> B{Para cada categoria}
+    B --> C["Filtra usuários<br/>por preferência"]
+    C --> D["Constrói grafo G_a<br/>(vértices + arestas ≥ threshold)"]
+    D --> E["CliqueSolver.solve(G_a)<br/>Força bruta O(2ⁿ · n²)"]
+    E --> F[Clique Máximo]
+    F --> G["Monta nodes/edges<br/>com flags inClique"]
+    G --> H[CategoryResult]
+    H --> I{Mais categorias?}
+    I -- Sim --> B
+    I -- Não --> J["rankCategories()<br/>cliqueSize DESC<br/>aggregateReach DESC"]
+    J --> K[CategoryResult ordernado]
+```
 
 ---
 
 ## Configuração da Simulação
 
-Todas as configurações estão centralizadas em **[src/config.ts](src/config.ts)**. Edite esse arquivo e rode `npm start` novamente para ver os resultados com os novos parâmetros.
+Todas as configurações estão centralizadas em **[src/config/config.ts](src/config/config.ts)**. Edite esse arquivo e rode `npm start` novamente.
 
 ```typescript
 export const simulationConfig: GeneratorOptions = {
@@ -65,7 +138,7 @@ export const simulationConfig: GeneratorOptions = {
   reachHigh: 500_000 // alcance máximo de seguidores por usuário
 };
 
-export const reportOutputPath = "report.html"; // caminho do relatório gerado
+export const reportOutputPath = "report.html";
 ```
 
 ### Parâmetros principais
@@ -73,7 +146,7 @@ export const reportOutputPath = "report.html"; // caminho do relatório gerado
 | Parâmetro | Efeito |
 | --- | --- |
 | `seed` | Troque para explorar cenários diferentes mantendo reprodutibilidade |
-| `numUsers` | Mantenha abaixo de ~25 — o solver é força bruta O(2^n * n^2) |
+| `numUsers` | Mantenha abaixo de ~25 — o solver é força bruta O(2ⁿ · n²) |
 | `categories` | Adicione ou remova categorias livremente |
 | `threshold` | Menor valor = grafos mais densos = cliques potencialmente maiores |
 | `prefProb` | Maior valor = mais usuários elegíveis por categoria = grafos maiores |
@@ -92,7 +165,7 @@ O arquivo `report.html` gerado contém:
 | **Usuários** | Tabela com todos os usuários, seguidores e preferências por categoria |
 | **`<Categoria>`** | Grafo interativo (vis.js) com membros do clique destacados em laranja |
 
-Nos grafos: nós **laranja** = membros do clique máximo; nós **azuis** = demais usuários elegíveis. As arestas laranjas conectam membros do clique entre si.
+Nos grafos: nós **laranja** = membros do clique máximo; nós **azuis** = demais usuários elegíveis. Arestas laranjas conectam membros do clique entre si.
 
 ---
 
@@ -100,25 +173,23 @@ Nos grafos: nós **laranja** = membros do clique máximo; nós **azuis** = demai
 
 ```text
 src/
-├── config.ts      Configurações da simulação — edite aqui
-├── models.ts      Interfaces TypeScript (User, ProblemInstance, etc.)
-├── graph.ts       Classe Graph — lista de adjacência
-├── generator.ts   Classe InstanceGenerator — geração aleatória reprodutível
-├── solver.ts      Classe CliqueSolver — força bruta com early exit
-├── analyzer.ts    Classe ViralAnalyzer — orquestra grafos, solver e ranking
-├── report.ts      Classe ReportGenerator — gera o relatório HTML
-└── main.ts        Apenas main() — instancia e encadeia as classes
-```
-
-Documentação técnica detalhada: [.docs/implementation.md](.docs/implementation.md)
-
----
-
-## Comandos
-
-```bash
-npm start         # executa a simulação e gera report.html
-npm run build     # compila TypeScript para dist/
+├── main.ts                  Orquestração — instancia e encadeia as classes
+├── config/
+│   └── config.ts            Configurações da simulação — edite aqui
+├── models/
+│   └── models.ts            Interfaces TypeScript (User, ProblemInstance, etc.)
+├── services/
+│   ├── generator.ts         InstanceGenerator — geração aleatória reprodutível (PRNG Mulberry32)
+│   ├── analyzer.ts          ViralAnalyzer — constrói grafos, executa solver e rankeia
+│   ├── solver.ts            CliqueSolver — força bruta com early exit
+│   ├── graph.ts             Graph — lista de adjacência com sets
+│   └── __tests__/           Testes unitários (vitest)
+│       ├── graph.test.ts
+│       ├── solver.test.ts
+│       ├── generator.test.ts
+│       └── analyzer.test.ts
+└── reports/
+    └── report.ts            ReportGenerator — gera o relatório HTML interativo
 ```
 
 ---
