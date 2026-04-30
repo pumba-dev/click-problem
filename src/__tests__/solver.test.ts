@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Graph } from "../services/graph.js";
+import { Graph } from "../models/graph.js";
 import { CliqueSolver } from "../services/solver.js";
 
 function makeCompleteGraph(vertices: number[]): Graph {
@@ -66,7 +66,11 @@ describe("CliqueSolver", () => {
       const result = [...CliqueSolver.combinations([0, 1, 2], 2)];
       expect(result).toHaveLength(3);
       expect(result).toEqual(
-        expect.arrayContaining([[0, 1], [0, 2], [1, 2]]),
+        expect.arrayContaining([
+          [0, 1],
+          [0, 2],
+          [1, 2],
+        ]),
       );
     });
 
@@ -103,44 +107,44 @@ describe("CliqueSolver", () => {
 
   describe("solve", () => {
     it("retorna array vazio para grafo sem vértices", () => {
-      expect(solver.solve(new Graph([]))).toEqual([]);
+      expect(solver.solve(new Graph([])).clique).toEqual([]);
     });
 
     it("retorna o único vértice para grafo com um vértice", () => {
       const g = new Graph([5]);
-      expect(solver.solve(g)).toEqual([5]);
+      expect(solver.solve(g).clique).toEqual([5]);
     });
 
     it("retorna um vértice para grafo sem arestas", () => {
       const g = new Graph([1, 2, 3]);
-      const result = solver.solve(g);
-      expect(result).toHaveLength(1);
-      expect([1, 2, 3]).toContain(result[0]);
+      const { clique } = solver.solve(g);
+      expect(clique).toHaveLength(1);
+      expect([1, 2, 3]).toContain(clique[0]);
     });
 
     it("encontra clique de tamanho 2 para grafo com uma aresta", () => {
       const g = new Graph([1, 2, 3]);
       g.addEdge(1, 2);
-      const result = solver.solve(g);
-      expect(result).toHaveLength(2);
-      expect(result).toEqual(expect.arrayContaining([1, 2]));
+      const { clique } = solver.solve(g);
+      expect(clique).toHaveLength(2);
+      expect(clique).toEqual(expect.arrayContaining([1, 2]));
     });
 
     it("encontra K3 completo", () => {
       const g = makeCompleteGraph([0, 1, 2]);
-      const result = solver.solve(g);
-      expect(result).toHaveLength(3);
-      expect(result).toEqual(expect.arrayContaining([0, 1, 2]));
+      const { clique } = solver.solve(g);
+      expect(clique).toHaveLength(3);
+      expect(clique).toEqual(expect.arrayContaining([0, 1, 2]));
     });
 
     it("encontra todos os 4 vértices em K4", () => {
       const g = makeCompleteGraph([0, 1, 2, 3]);
-      expect(solver.solve(g)).toHaveLength(4);
+      expect(solver.solve(g).clique).toHaveLength(4);
     });
 
     it("encontra todos os 5 vértices em K5", () => {
       const g = makeCompleteGraph([0, 1, 2, 3, 4]);
-      expect(solver.solve(g)).toHaveLength(5);
+      expect(solver.solve(g).clique).toHaveLength(5);
     });
 
     it("escolhe o maior clique quando há múltiplos cliques", () => {
@@ -150,9 +154,9 @@ describe("CliqueSolver", () => {
       g.addEdge(1, 2);
       g.addEdge(0, 2);
       g.addEdge(0, 3);
-      const result = solver.solve(g);
-      expect(result).toHaveLength(3);
-      expect(result).toEqual(expect.arrayContaining([0, 1, 2]));
+      const { clique } = solver.solve(g);
+      expect(clique).toHaveLength(3);
+      expect(clique).toEqual(expect.arrayContaining([0, 1, 2]));
     });
 
     it("escolhe o maior entre dois cliques disjuntos", () => {
@@ -162,9 +166,9 @@ describe("CliqueSolver", () => {
       g.addEdge(1, 2);
       g.addEdge(0, 2);
       g.addEdge(3, 4);
-      const result = solver.solve(g);
-      expect(result).toHaveLength(3);
-      expect(result).toEqual(expect.arrayContaining([0, 1, 2]));
+      const { clique } = solver.solve(g);
+      expect(clique).toHaveLength(3);
+      expect(clique).toEqual(expect.arrayContaining([0, 1, 2]));
     });
 
     it("resultado é sempre um clique válido — verificado via CliqueSolver.isClique", () => {
@@ -174,8 +178,8 @@ describe("CliqueSolver", () => {
       g.addEdge(1, 2);
       g.addEdge(2, 3);
       g.addEdge(3, 4);
-      const result = solver.solve(g);
-      expect(CliqueSolver.isClique(g, result)).toBe(true);
+      const { clique } = solver.solve(g);
+      expect(CliqueSolver.isClique(g, clique)).toBe(true);
     });
 
     it("grafo estrela: clique máximo tem tamanho 2", () => {
@@ -184,14 +188,23 @@ describe("CliqueSolver", () => {
       g.addEdge(0, 1);
       g.addEdge(0, 2);
       g.addEdge(0, 3);
-      expect(solver.solve(g)).toHaveLength(2);
+      expect(solver.solve(g).clique).toHaveLength(2);
     });
 
     it("lida corretamente com IDs de vértices não contíguos", () => {
       const g = makeCompleteGraph([10, 20, 30]);
-      const result = solver.solve(g);
-      expect(result).toHaveLength(3);
-      expect(result).toEqual(expect.arrayContaining([10, 20, 30]));
+      const { clique } = solver.solve(g);
+      expect(clique).toHaveLength(3);
+      expect(clique).toEqual(expect.arrayContaining([10, 20, 30]));
+    });
+
+    it("combinationsTested é 0 para grafo sem vértices", () => {
+      expect(solver.solve(new Graph([])).combinationsTested).toBe(0);
+    });
+
+    it("combinationsTested >= 1 para grafo não-vazio", () => {
+      const { combinationsTested } = solver.solve(makeCompleteGraph([0, 1, 2]));
+      expect(combinationsTested).toBeGreaterThanOrEqual(1);
     });
   });
 });

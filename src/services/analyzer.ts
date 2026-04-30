@@ -1,6 +1,11 @@
-import { Graph } from "./graph.js";
+import { Graph } from "../models/graph.js";
 import { CliqueSolver } from "./solver.js";
-import type { ProblemInstance, GraphNodeData, GraphEdgeData, CategoryResult } from "../models/models.js";
+import type {
+  ProblemInstance,
+  GraphNodeData,
+  GraphEdgeData,
+  CategoryResult,
+} from "../models/models.js";
 
 export type { CategoryResult };
 
@@ -38,7 +43,10 @@ export class ViralAnalyzer {
    * Vértices: usuários com `preferences[category] === true`.
    * Arestas: pares cujo score de interação supera o limiar da instância.
    */
-  private buildCategoryGraph(instance: ProblemInstance, category: string): Graph {
+  private buildCategoryGraph(
+    instance: ProblemInstance,
+    category: string,
+  ): Graph {
     const eligible = instance.users
       .filter((u) => u.preferences[category] === true)
       .map((u) => u.id);
@@ -47,7 +55,10 @@ export class ViralAnalyzer {
 
     for (let i = 0; i < eligible.length; i++) {
       for (let j = i + 1; j < eligible.length; j++) {
-        const score = instance.interactions.get(ViralAnalyzer.key(eligible[i], eligible[j])) ?? 0;
+        const score =
+          instance.interactions.get(
+            ViralAnalyzer.key(eligible[i], eligible[j]),
+          ) ?? 0;
         if (score >= instance.threshold) {
           graph.addEdge(eligible[i], eligible[j]);
         }
@@ -72,7 +83,8 @@ export class ViralAnalyzer {
    */
   private rankCategories(results: CategoryResult[]): CategoryResult[] {
     return [...results].sort(
-      (a, b) => b.cliqueSize - a.cliqueSize || b.aggregateReach - a.aggregateReach,
+      (a, b) =>
+        b.cliqueSize - a.cliqueSize || b.aggregateReach - a.aggregateReach,
     );
   }
 
@@ -91,7 +103,9 @@ export class ViralAnalyzer {
 
     const results = instance.categories.map((category) => {
       const graph = this.buildCategoryGraph(instance, category);
-      const clique = this.solver.solve(graph);
+      const solveStart = performance.now();
+      const { clique, combinationsTested } = this.solver.solve(graph);
+      const solveTime = performance.now() - solveStart;
       const cliqueSet = new Set(clique);
 
       const nodes: GraphNodeData[] = graph.vertices.map((id) => {
@@ -124,6 +138,8 @@ export class ViralAnalyzer {
         cliqueMembers,
         nodes,
         edges,
+        solveTime,
+        combinationsTested,
       };
     });
 
@@ -152,10 +168,14 @@ export class ViralAnalyzer {
         .join(", ");
 
       console.log(`Rank ${i + 1} | ${r.category}`);
-      console.log(`  Grafo         : ${r.graphVertices} vértices, ${r.graphEdgeCount} arestas`);
+      console.log(
+        `  Grafo         : ${r.graphVertices} vértices, ${r.graphEdgeCount} arestas`,
+      );
       console.log(`  Clique máximo : ${r.cliqueSize} membro(s)`);
       console.log(`  Membros       : ${members || "—"}`);
-      console.log(`  Alcance total : ${ViralAnalyzer.formatReach(r.aggregateReach)}`);
+      console.log(
+        `  Alcance total : ${ViralAnalyzer.formatReach(r.aggregateReach)}`,
+      );
       console.log();
     }
 

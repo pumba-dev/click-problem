@@ -23,8 +23,18 @@ describe("ViralAnalyzer", () => {
     it("retorna um resultado por categoria", () => {
       const instance: ProblemInstance = {
         users: [
-          { id: 0, name: "U1", reach: 1000, preferences: { tech: true, music: false } },
-          { id: 1, name: "U2", reach: 2000, preferences: { tech: true, music: true } },
+          {
+            id: 0,
+            name: "U1",
+            reach: 1000,
+            preferences: { tech: true, music: false },
+          },
+          {
+            id: 1,
+            name: "U2",
+            reach: 2000,
+            preferences: { tech: true, music: true },
+          },
         ],
         categories: ["tech", "music"],
         interactions: buildInteractions([0, 1], { "0,1": 0.9 }),
@@ -87,7 +97,9 @@ describe("ViralAnalyzer", () => {
 
     it("trata categoria sem usuários elegíveis — clique vazio", () => {
       const instance: ProblemInstance = {
-        users: [{ id: 0, name: "U1", reach: 1000, preferences: { tech: false } }],
+        users: [
+          { id: 0, name: "U1", reach: 1000, preferences: { tech: false } },
+        ],
         categories: ["tech"],
         interactions: new Map(),
         threshold: 0.6,
@@ -105,9 +117,24 @@ describe("ViralAnalyzer", () => {
       // tech: 3 usuários todos conectados (clique 3); music: 2 usuários (clique 2)
       const instance: ProblemInstance = {
         users: [
-          { id: 0, name: "U1", reach: 1000, preferences: { tech: true, music: false } },
-          { id: 1, name: "U2", reach: 1000, preferences: { tech: true, music: true } },
-          { id: 2, name: "U3", reach: 1000, preferences: { tech: true, music: true } },
+          {
+            id: 0,
+            name: "U1",
+            reach: 1000,
+            preferences: { tech: true, music: false },
+          },
+          {
+            id: 1,
+            name: "U2",
+            reach: 1000,
+            preferences: { tech: true, music: true },
+          },
+          {
+            id: 2,
+            name: "U3",
+            reach: 1000,
+            preferences: { tech: true, music: true },
+          },
         ],
         categories: ["music", "tech"], // ordem invertida para testar o sort
         interactions: buildInteractions([0, 1, 2], {
@@ -120,15 +147,27 @@ describe("ViralAnalyzer", () => {
       const results = analyzer.analyze(instance);
       expect(results[0].category).toBe("tech");
       for (let i = 0; i < results.length - 1; i++) {
-        expect(results[i].cliqueSize).toBeGreaterThanOrEqual(results[i + 1].cliqueSize);
+        expect(results[i].cliqueSize).toBeGreaterThanOrEqual(
+          results[i + 1].cliqueSize,
+        );
       }
     });
 
     it("desempata por aggregateReach decrescente quando cliqueSize é igual", () => {
       const instance: ProblemInstance = {
         users: [
-          { id: 0, name: "U1", reach: 100, preferences: { tech: true, music: false } },
-          { id: 1, name: "U2", reach: 5000, preferences: { tech: false, music: true } },
+          {
+            id: 0,
+            name: "U1",
+            reach: 100,
+            preferences: { tech: true, music: false },
+          },
+          {
+            id: 1,
+            name: "U2",
+            reach: 5000,
+            preferences: { tech: false, music: true },
+          },
         ],
         categories: ["tech", "music"],
         interactions: buildInteractions([0, 1], { "0,1": 0.0 }),
@@ -136,7 +175,9 @@ describe("ViralAnalyzer", () => {
       };
       const results = analyzer.analyze(instance);
       expect(results[0].category).toBe("music");
-      expect(results[0].aggregateReach).toBeGreaterThan(results[1].aggregateReach);
+      expect(results[0].aggregateReach).toBeGreaterThan(
+        results[1].aggregateReach,
+      );
     });
   });
 
@@ -225,7 +266,9 @@ describe("ViralAnalyzer", () => {
 
     it("label dos nós contém o nome do usuário", () => {
       const instance: ProblemInstance = {
-        users: [{ id: 0, name: "Alice", reach: 1000, preferences: { tech: true } }],
+        users: [
+          { id: 0, name: "Alice", reach: 1000, preferences: { tech: true } },
+        ],
         categories: ["tech"],
         interactions: new Map(),
         threshold: 0.6,
@@ -255,7 +298,9 @@ describe("ViralAnalyzer", () => {
     it("escreve no console.log sem lançar exceção", () => {
       const spy = vi.spyOn(console, "log").mockImplementation(() => {});
       const instance: ProblemInstance = {
-        users: [{ id: 0, name: "U1", reach: 1000, preferences: { tech: true } }],
+        users: [
+          { id: 0, name: "U1", reach: 1000, preferences: { tech: true } },
+        ],
         categories: ["tech"],
         interactions: new Map(),
         threshold: 0.6,

@@ -48,6 +48,14 @@ export interface GraphEdgeData {
   inClique: boolean;
 }
 
+/** Retorno de CliqueSolver.solve(): clique encontrado + esforço computacional. */
+export interface SolveResult {
+  /** IDs dos vértices do clique máximo (vazio se grafo sem arestas). */
+  clique: number[];
+  /** Total de subconjuntos avaliados antes de encontrar o clique. */
+  combinationsTested: number;
+}
+
 /** Parâmetros opcionais para controlar a geração de instâncias aleatórias. */
 export interface GeneratorOptions {
   /** Número de usuários a gerar. Padrão: 30. */
@@ -85,4 +93,53 @@ export interface CategoryResult {
   cliqueMembers: Array<{ name: string; reach: number }>;
   nodes: GraphNodeData[];
   edges: GraphEdgeData[];
+  /** Tempo de wall-clock (ms) gasto pelo solver nesta categoria. */
+  solveTime?: number;
+  /** Total de subconjuntos testados pelo solver nesta categoria. */
+  combinationsTested?: number;
+}
+
+/** Resumo de timing e esforço por categoria, usado em SimulationStats. */
+export interface CategoryTimingEntry {
+  category: string;
+  solveTimeMs: number;
+  combinationsTested: number;
+}
+
+/** Estatísticas completas de uma execução, passadas de main.ts → ReportGenerator. */
+export interface SimulationStats {
+  /** Timestamp ISO-8601 capturado antes da geração da instância. */
+  timestamp: string;
+  /** Snapshot da configuração usada nesta execução. */
+  config: GeneratorOptions;
+
+  /** Ms de wall-clock para InstanceGenerator.generate(). */
+  generationTimeMs: number;
+  /** Ms de wall-clock para ViralAnalyzer.analyze() (todas as categorias). */
+  analysisTimeMs: number;
+  /** Ms de wall-clock para ReportGenerator.generate() (preenchido internamente). */
+  reportTimeMs: number;
+  /** Ms totais de wall-clock do início ao fim de main() (preenchido após generate()). */
+  totalTimeMs: number;
+
+  /** Uma entrada por categoria na ordem rankeada. */
+  categoryTimings: CategoryTimingEntry[];
+
+  /** Total de pares possíveis C(numUsers, 2). */
+  totalPossiblePairs: number;
+  /** Pares com score >= threshold (potenciais arestas). */
+  connectionsAboveThreshold: number;
+  /** Densidade da rede: connectionsAboveThreshold / totalPossiblePairs ∈ [0,1]. */
+  networkDensity: number;
+
+  /** Soma de combinationsTested em todas as categorias. */
+  totalCombinationsTested: number;
+  /** Média de cliqueSize entre todas as categorias. */
+  avgCliqueSize: number;
+  /** Maior cliqueSize encontrado. */
+  maxCliqueSize: number;
+  /** Menor cliqueSize encontrado. */
+  minCliqueSize: number;
+  /** Nome da categoria com maior aggregateReach. */
+  highestReachCategory: string;
 }

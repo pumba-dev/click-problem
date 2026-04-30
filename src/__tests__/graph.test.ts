@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Graph } from "../services/graph.js";
+import { Graph } from "../models/graph.js";
 
 describe("Graph", () => {
   describe("constructor", () => {
@@ -158,7 +158,13 @@ describe("Graph", () => {
       g.addEdge(1, 3);
       const edges = g.getEdges();
       expect(edges).toHaveLength(3);
-      expect(edges).toEqual(expect.arrayContaining([[1, 2], [2, 3], [1, 3]]));
+      expect(edges).toEqual(
+        expect.arrayContaining([
+          [1, 2],
+          [2, 3],
+          [1, 3],
+        ]),
+      );
     });
   });
 });

@@ -41,7 +41,9 @@ describe("InstanceGenerator", () => {
 
     it("atribui reach como inteiro", () => {
       const instance = generator.generate(baseOptions);
-      instance.users.forEach((u) => expect(Number.isInteger(u.reach)).toBe(true));
+      instance.users.forEach((u) =>
+        expect(Number.isInteger(u.reach)).toBe(true),
+      );
     });
 
     it("atribui preferências booleanas para cada categoria", () => {
@@ -55,7 +57,9 @@ describe("InstanceGenerator", () => {
     it("cria preferências apenas para as categorias definidas (sem extras)", () => {
       const instance = generator.generate(baseOptions);
       instance.users.forEach((u) => {
-        expect(Object.keys(u.preferences)).toEqual(expect.arrayContaining(["tech", "music"]));
+        expect(Object.keys(u.preferences)).toEqual(
+          expect.arrayContaining(["tech", "music"]),
+        );
         expect(Object.keys(u.preferences)).toHaveLength(2);
       });
     });
@@ -100,13 +104,17 @@ describe("InstanceGenerator", () => {
       const a = generator.generate(baseOptions);
       const b = generator.generate(baseOptions);
       expect(a.users).toEqual(b.users);
-      expect([...a.interactions.entries()]).toEqual([...b.interactions.entries()]);
+      expect([...a.interactions.entries()]).toEqual([
+        ...b.interactions.entries(),
+      ]);
     });
 
     it("seeds diferentes produzem instâncias distintas", () => {
       const a = generator.generate({ ...baseOptions, seed: 1 });
       const b = generator.generate({ ...baseOptions, seed: 2 });
-      expect(a.users.map((u) => u.reach)).not.toEqual(b.users.map((u) => u.reach));
+      expect(a.users.map((u) => u.reach)).not.toEqual(
+        b.users.map((u) => u.reach),
+      );
     });
 
     it("calls independentes com a mesma seed não interferem entre si", () => {
@@ -119,9 +127,14 @@ describe("InstanceGenerator", () => {
 
   describe("generate — variações de configuração", () => {
     it("gera instância com uma única categoria", () => {
-      const instance = generator.generate({ ...baseOptions, categories: ["animals"] });
+      const instance = generator.generate({
+        ...baseOptions,
+        categories: ["animals"],
+      });
       expect(instance.categories).toEqual(["animals"]);
-      instance.users.forEach((u) => expect(Object.keys(u.preferences)).toEqual(["animals"]));
+      instance.users.forEach((u) =>
+        expect(Object.keys(u.preferences)).toEqual(["animals"]),
+      );
     });
 
     it("gera instância com numUsers = 1 (sem interações)", () => {

@@ -1,5 +1,12 @@
 import { writeFileSync } from "node:fs";
-import type { ProblemInstance, GraphNodeData, GraphEdgeData, CategoryResult } from "../models/models.js";
+import type {
+  ProblemInstance,
+  GraphNodeData,
+  GraphEdgeData,
+  CategoryResult,
+  GeneratorOptions,
+  SimulationStats,
+} from "../models/models.js";
 
 /**
  * Gerador do relatório HTML interativo de análise de cliques.
@@ -42,7 +49,10 @@ export class ReportGenerator {
       color: {
         background: n.inClique ? "#F28E2B" : "#4E79A7",
         border: n.inClique ? "#B35C00" : "#2A5A8F",
-        highlight: { background: n.inClique ? "#FFB05A" : "#6BA3D6", border: "#555" },
+        highlight: {
+          background: n.inClique ? "#FFB05A" : "#6BA3D6",
+          border: "#555",
+        },
       },
       font: { color: "#fff", size: 13 },
       size: n.inClique ? 28 : 20,
@@ -52,7 +62,10 @@ export class ReportGenerator {
     const visEdges = r.edges.map((e: GraphEdgeData) => ({
       from: e.from,
       to: e.to,
-      color: { color: e.inClique ? "#F28E2B" : "#ccc", opacity: e.inClique ? 1.0 : 0.6 },
+      color: {
+        color: e.inClique ? "#F28E2B" : "#ccc",
+        opacity: e.inClique ? 1.0 : 0.6,
+      },
       width: e.inClique ? 3 : 1,
       dashes: !e.inClique,
     }));
@@ -79,7 +92,13 @@ export class ReportGenerator {
   private static buildCategorySection(r: CategoryResult, rank: number): string {
     const id = ReportGenerator.slugify(r.category);
     const medal =
-      rank === 1 ? "&#127945;" : rank === 2 ? "&#129352;" : rank === 3 ? "&#129353;" : `#${rank}`;
+      rank === 1
+        ? "&#127945;"
+        : rank === 2
+          ? "&#129352;"
+          : rank === 3
+            ? "&#129353;"
+            : `#${rank}`;
 
     const memberCards = r.cliqueMembers
       .map(
@@ -124,9 +143,15 @@ export class ReportGenerator {
    * @param instance      - instância do problema
    * @param cliqueUserIds - conjunto de IDs de usuários presentes em algum clique
    */
-  private static buildUsersTable(instance: ProblemInstance, cliqueUserIds: Set<number>): string {
+  private static buildUsersTable(
+    instance: ProblemInstance,
+    cliqueUserIds: Set<number>,
+  ): string {
     const catHeaders = instance.categories
-      .map((c) => `<th class="pref-th" title="${c}">${ReportGenerator.capitalize(c)}</th>`)
+      .map(
+        (c) =>
+          `<th class="pref-th" title="${c}">${ReportGenerator.capitalize(c)}</th>`,
+      )
       .join("");
 
     const rows = instance.users
@@ -169,6 +194,252 @@ export class ReportGenerator {
   </section>`;
   }
 
+  private static buildInteractionsNetworkFn(instance: ProblemInstance): string {
+    const maxReach = Math.max(...instance.users.map((u) => u.reach));
+    const visNodes = instance.users.map((u) => {
+      const t = maxReach > 0 ? u.reach / maxReach : 0;
+      const r = Math.round(219 + (30 - 219) * t);
+      const g = Math.round(191 + (64 - 191) * t);
+      const b = Math.round(254 + (175 - 254) * t);
+      const bg = `rgb(${r},${g},${b})`;
+      return {
+        id: u.id,
+        label: u.name,
+        title: `${u.name}\n${ReportGenerator.fmtN(u.reach)} seguidores`,
+        color: {
+          background: bg,
+          border: "#1e40af",
+          highlight: { background: "#93c5fd", border: "#1e3a8a" },
+        },
+        font: { color: t > 0.55 ? "#fff" : "#1e3748", size: 12 },
+        size: 20,
+      };
+    });
+
+    const visEdges = Array.from(instance.interactions.entries()).map(
+      ([key, score]) => {
+        const [from, to] = key.split(",").map(Number);
+        const pct = Math.round(score * 100);
+        const er = Math.round(226 + (242 - 226) * score);
+        const eg = Math.round(232 + (142 - 232) * score);
+        const eb = Math.round(240 + (43 - 240) * score);
+        const edgeColor = `rgb(${er},${eg},${eb})`;
+        const aboveThreshold = score >= instance.threshold;
+        return {
+          from,
+          to,
+          label: `${pct}%`,
+          width: 1 + score * 5,
+          dashes: !aboveThreshold,
+          color: {
+            color: edgeColor,
+            opacity: 0.3 + score * 0.7,
+            highlight: aboveThreshold ? "#e11d48" : edgeColor,
+          },
+          font: { size: 9, color: "#718096", align: "middle", strokeWidth: 0 },
+        };
+      },
+    );
+
+    return `netInits['interactions']=function(){
+  var c=document.getElementById('net-interactions');
+  if(!c)return;
+  new vis.Network(c,{
+    nodes:new vis.DataSet(${JSON.stringify(visNodes)}),
+    edges:new vis.DataSet(${JSON.stringify(visEdges)})
+  },{
+    physics:{barnesHut:{gravitationalConstant:-8000,springLength:160,centralGravity:0.2,springConstant:0.04,damping:0.09},stabilization:{iterations:300,fit:true}},
+    edges:{smooth:{type:'continuous'},font:{size:9,color:'#718096',align:'middle',strokeWidth:0}},
+    nodes:{borderWidth:1},
+    interaction:{hover:true,tooltipDelay:150},
+    layout:{improvedLayout:true}
+  });
+};`;
+  }
+
+  private static buildInteractionsSection(instance: ProblemInstance): string {
+    const scores = Array.from(instance.interactions.values());
+    const totalPairs = scores.length;
+    const mean =
+      totalPairs > 0 ? scores.reduce((s, v) => s + v, 0) / totalPairs : 0;
+    const sorted = [...scores].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    const median =
+      sorted.length === 0
+        ? 0
+        : sorted.length % 2 === 1
+          ? sorted[mid]
+          : (sorted[mid - 1] + sorted[mid]) / 2;
+    const aboveThreshold = scores.filter((v) => v >= instance.threshold).length;
+
+    return `<section class="card">
+    <h2>Grafo de Intera&#231;&#245;es entre Usu&#225;rios</h2>
+    <p class="users-subtitle">${totalPairs} pares &middot; limiar = ${instance.threshold.toFixed(2)} &middot; espessura e cor da aresta proporcionais ao score</p>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">${totalPairs}</span><span class="stat-lbl">pares totais</span></div>
+      <div class="stat-card"><span class="stat-val">${Math.round(mean * 100)}%</span><span class="stat-lbl">m&#233;dia</span></div>
+      <div class="stat-card"><span class="stat-val">${Math.round(median * 100)}%</span><span class="stat-lbl">mediana</span></div>
+      <div class="stat-card accent"><span class="stat-val">${aboveThreshold}</span><span class="stat-lbl">acima do limiar</span></div>
+    </div>
+    <div class="graph-legend">
+      <span><span class="dot" style="background:#1e40af"></span>Alto alcance</span>
+      <span><span class="dot" style="background:#dbeafe;border:1px solid #93c5fd"></span>Baixo alcance</span>
+      <span><span class="line" style="background:#F28E2B"></span>Score alto</span>
+      <span><span class="line" style="background:#e2e8f0"></span>Score baixo</span>
+      <span><span class="line line-regular"></span>Abaixo do limiar</span>
+    </div>
+    <div id="net-interactions" class="network-box network-box--tall"></div>
+  </section>`;
+  }
+
+  /** Formata um número de ms com 3 casas decimais para exibição. */
+  private static fmtMs(ms: number): string {
+    return ms.toFixed(3) + " ms";
+  }
+
+  /**
+   * Calcula todas as estatísticas derivadas de uma execução da simulação.
+   * Centraliza a lógica de montagem de `SimulationStats` fora de `main.ts`.
+   *
+   * @param instance          - instância do problema gerada
+   * @param ranked            - resultados rankeados da análise
+   * @param generationTimeMs  - tempo de geração da instância (ms)
+   * @param analysisTimeMs    - tempo total de análise (ms)
+   */
+  static buildStats(
+    instance: ProblemInstance,
+    ranked: CategoryResult[],
+    config: GeneratorOptions,
+    generationTimeMs: number,
+    analysisTimeMs: number,
+  ): SimulationStats {
+    const allScores = Array.from(instance.interactions.values());
+    const totalPossiblePairs = allScores.length;
+    const connectionsAboveThreshold = allScores.filter((s) => s >= instance.threshold).length;
+    const networkDensity =
+      totalPossiblePairs > 0 ? connectionsAboveThreshold / totalPossiblePairs : 0;
+
+    const cliqueSizes = ranked.map((r) => r.cliqueSize);
+    const totalCombinationsTested = ranked.reduce(
+      (s, r) => s + (r.combinationsTested ?? 0),
+      0,
+    );
+    const avgCliqueSize =
+      cliqueSizes.length > 0
+        ? cliqueSizes.reduce((a, b) => a + b, 0) / cliqueSizes.length
+        : 0;
+    const highestReachCategory =
+      ranked.length > 0
+        ? ranked.reduce((best, r) => (r.aggregateReach > best.aggregateReach ? r : best)).category
+        : "";
+
+    return {
+      timestamp: new Date().toISOString(),
+      config,
+      generationTimeMs,
+      analysisTimeMs,
+      reportTimeMs: 0,
+      totalTimeMs: 0,
+      categoryTimings: ranked.map((r) => ({
+        category: r.category,
+        solveTimeMs: r.solveTime ?? 0,
+        combinationsTested: r.combinationsTested ?? 0,
+      })),
+      totalPossiblePairs,
+      connectionsAboveThreshold,
+      networkDensity,
+      totalCombinationsTested,
+      avgCliqueSize,
+      maxCliqueSize: cliqueSizes.length > 0 ? Math.max(...cliqueSizes) : 0,
+      minCliqueSize: cliqueSizes.length > 0 ? Math.min(...cliqueSizes) : 0,
+      highestReachCategory,
+    };
+  }
+
+  /** Gera o HTML completo da aba Estatísticas. */
+  private static buildStatsSection(stats: SimulationStats): string {
+    const dt = new Date(stats.timestamp).toLocaleString("pt-BR", {
+      dateStyle: "short",
+      timeStyle: "medium",
+    });
+    const cats = stats.config.categories.join(", ");
+    const reachRange = `${ReportGenerator.fmtN(stats.config.reachLow)} – ${ReportGenerator.fmtN(stats.config.reachHigh)}`;
+
+    const timingRows = stats.categoryTimings
+      .map(
+        (t) => `<tr>
+          <td>${ReportGenerator.capitalize(t.category)}</td>
+          <td class="reach-cell">${t.solveTimeMs.toFixed(3)}</td>
+          <td class="reach-cell">${ReportGenerator.fmtN(t.combinationsTested)}</td>
+        </tr>`,
+      )
+      .join("");
+
+    return `<section class="card">
+    <h2>Metadados da Simula&#231;&#227;o</h2>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val" style="font-size:1rem">${dt}</span><span class="stat-lbl">data / hora</span></div>
+      <div class="stat-card"><span class="stat-val">${stats.config.seed}</span><span class="stat-lbl">seed (PRNG)</span></div>
+      <div class="stat-card"><span class="stat-val">${stats.config.numUsers}</span><span class="stat-lbl">usu&#225;rios</span></div>
+      <div class="stat-card"><span class="stat-val">${stats.config.categories.length}</span><span class="stat-lbl">categorias</span></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">${stats.config.threshold.toFixed(2)}</span><span class="stat-lbl">limiar (threshold)</span></div>
+      <div class="stat-card"><span class="stat-val">${(stats.config.prefProb * 100).toFixed(0)}%</span><span class="stat-lbl">prob. prefer&#234;ncia</span></div>
+      <div class="stat-card" style="grid-column:span 2"><span class="stat-val" style="font-size:1rem">${reachRange}</span><span class="stat-lbl">alcance m&#237;n – m&#225;x (seguidores)</span></div>
+    </div>
+    <p class="users-subtitle" style="margin-top:.5rem">Categorias: ${cats}</p>
+  </section>
+
+  <section class="card">
+    <h2>Desempenho de Processamento</h2>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">${ReportGenerator.fmtMs(stats.generationTimeMs)}</span><span class="stat-lbl">gera&#231;&#227;o da inst&#226;ncia</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">${ReportGenerator.fmtMs(stats.analysisTimeMs)}</span><span class="stat-lbl">an&#225;lise (todas categorias)</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">${ReportGenerator.fmtMs(stats.reportTimeMs)}</span><span class="stat-lbl">gera&#231;&#227;o do relat&#243;rio</span></div>
+      <div class="stat-card accent"><span class="stat-val" style="font-size:1.1rem">${ReportGenerator.fmtMs(stats.totalTimeMs)}</span><span class="stat-lbl">tempo total</span></div>
+    </div>
+    <div class="chart-box" style="max-width:640px;margin-top:.5rem">
+      <canvas id="chart-timing"></canvas>
+    </div>
+    <div class="table-scroll" style="margin-top:1rem">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th style="text-align:right">Tempo Solver (ms)</th>
+            <th style="text-align:right">Subconjuntos Testados</th>
+          </tr>
+        </thead>
+        <tbody>${timingRows}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Estat&#237;sticas do Grafo de Intera&#231;&#245;es</h2>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">${ReportGenerator.fmtN(stats.totalPossiblePairs)}</span><span class="stat-lbl">pares poss&#237;veis C(n,2)</span></div>
+      <div class="stat-card accent"><span class="stat-val">${ReportGenerator.fmtN(stats.connectionsAboveThreshold)}</span><span class="stat-lbl">conex&#245;es acima do limiar</span></div>
+      <div class="stat-card"><span class="stat-val">${(stats.networkDensity * 100).toFixed(1)}%</span><span class="stat-lbl">densidade da rede</span></div>
+      <div class="stat-card"><span class="stat-val">${stats.config.threshold.toFixed(2)}</span><span class="stat-lbl">limiar aplicado</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Esfor&#231;o Computacional (Solver)</h2>
+    <div class="stats-row">
+      <div class="stat-card accent"><span class="stat-val">${ReportGenerator.fmtN(stats.totalCombinationsTested)}</span><span class="stat-lbl">subconjuntos testados (total)</span></div>
+      <div class="stat-card"><span class="stat-val">${stats.avgCliqueSize.toFixed(2)}</span><span class="stat-lbl">tamanho m&#233;dio de clique</span></div>
+      <div class="stat-card"><span class="stat-val">${stats.maxCliqueSize}</span><span class="stat-lbl">maior clique</span></div>
+      <div class="stat-card"><span class="stat-val">${stats.minCliqueSize}</span><span class="stat-lbl">menor clique</span></div>
+    </div>
+    <div class="stats-row" style="grid-template-columns:1fr">
+      <div class="stat-card accent"><span class="stat-val">${ReportGenerator.capitalize(stats.highestReachCategory)}</span><span class="stat-lbl">categoria com maior alcance agregado</span></div>
+    </div>
+  </section>`;
+  }
+
   /**
    * Gera e salva o relatório HTML completo em `outputPath`.
    *
@@ -177,9 +448,16 @@ export class ReportGenerator {
    *
    * @param instance   - instância do problema
    * @param ranked     - resultados ordenados por (cliqueSize DESC, aggregateReach DESC)
+   * @param stats      - estatísticas de execução (timing, metadados, métricas)
    * @param outputPath - caminho do arquivo HTML de saída (padrão: `report.html`)
    */
-  generate(instance: ProblemInstance, ranked: CategoryResult[], outputPath = "report.html"): void {
+  generate(
+    instance: ProblemInstance,
+    ranked: CategoryResult[],
+    stats: SimulationStats,
+    outputPath = "report.html",
+  ): void {
+    const reportStart = performance.now();
     const labels = JSON.stringify(ranked.map((r) => r.category));
     const cliqueSizes = JSON.stringify(ranked.map((r) => r.cliqueSize));
     const reaches = JSON.stringify(ranked.map((r) => r.aggregateReach));
@@ -218,7 +496,11 @@ export class ReportGenerator {
       )
       .join("\n");
 
-    const networkFns = ranked.map((r) => ReportGenerator.buildNetworkFn(r)).join("\n  ");
+    const networkFns = ranked
+      .map((r) => ReportGenerator.buildNetworkFn(r))
+      .join("\n  ");
+    const interactionsNetworkFn =
+      ReportGenerator.buildInteractionsNetworkFn(instance);
 
     const html = `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -302,6 +584,7 @@ export class ReportGenerator {
     .line-clique{background:#F28E2B}
     .line-regular{background:transparent;border-top:2px dashed #ccc;height:0}
     .network-box{height:360px;border:1px solid #e2e8f0;border-radius:8px;background:#fafbfc;margin-bottom:1.1rem}
+    .network-box--tall{height:480px}
     .members-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#718096;margin-bottom:.65rem}
     .members-grid{display:flex;flex-wrap:wrap;gap:.5rem}
     .member-card{background:#fff8f0;border:1px solid #F28E2B;border-radius:8px;padding:.45rem .85rem}
@@ -322,8 +605,11 @@ export class ReportGenerator {
 <nav class="tabs-bar" role="tablist">
   <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')" role="tab">Vis&#227;o Geral</button>
   <button class="tab-btn" data-tab="users" onclick="showTab('users')" role="tab">Usu&#225;rios</button>
+  <button class="tab-btn" data-tab="interactions" onclick="showTab('interactions')" role="tab">Intera&#231;&#245;es</button>
   <div class="tab-divider" aria-hidden="true"></div>
   ${catTabBtns}
+  <div class="tab-divider" aria-hidden="true"></div>
+  <button class="tab-btn" data-tab="estatisticas" onclick="showTab('estatisticas')" role="tab">Estat&#237;sticas</button>
 </nav>
 
 <div class="container">
@@ -353,7 +639,17 @@ export class ReportGenerator {
     ${ReportGenerator.buildUsersTable(instance, cliqueUserIds)}
   </div>
 
+  <div id="tab-interactions" class="tab-panel" role="tabpanel">
+    ${ReportGenerator.buildInteractionsSection(instance)}
+  </div>
+
   ${catPanels}
+
+  <div id="tab-estatisticas" class="tab-panel" role="tabpanel">
+    <div class="container" style="padding:0">
+      ___STATS_SECTION___
+    </div>
+  </div>
 
 </div>
 
@@ -374,6 +670,7 @@ export class ReportGenerator {
   }
 
   ${networkFns}
+  ${interactionsNetworkFn}
 
   new Chart(document.getElementById('chart-clique'), {
     type: 'bar',
@@ -404,12 +701,39 @@ export class ReportGenerator {
       scales: { y: { beginAtZero: true, title: { display: true, text: 'Seguidores totais' } } }
     }
   });
+
+  new Chart(document.getElementById('chart-timing'), {
+    type: 'bar',
+    data: {
+      labels: ${JSON.stringify(stats.categoryTimings.map((t) => ReportGenerator.capitalize(t.category)))},
+      datasets: [{
+        label: 'Tempo do solver (ms)',
+        data: ${JSON.stringify(stats.categoryTimings.map((t) => parseFloat(t.solveTimeMs.toFixed(3))))},
+        backgroundColor: '#4E79A7cc',
+        borderColor: '#4E79A7',
+        borderWidth: 2,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'Tempo do Solver por Categoria (ms)', font: { size: 14 } },
+        legend: { display: false }
+      },
+      scales: { x: { beginAtZero: true, title: { display: true, text: 'Milissegundos' } } }
+    }
+  });
 </script>
 
 </body>
 </html>`;
 
-    writeFileSync(outputPath, html, "utf-8");
+    stats.reportTimeMs = performance.now() - reportStart;
+    stats.totalTimeMs = stats.generationTimeMs + stats.analysisTimeMs + stats.reportTimeMs;
+    const finalHtml = html.replace("___STATS_SECTION___", ReportGenerator.buildStatsSection(stats));
+    writeFileSync(outputPath, finalHtml, "utf-8");
     console.log(`\nRelatório HTML gerado: ${outputPath}`);
   }
 }

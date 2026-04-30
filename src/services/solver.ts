@@ -1,4 +1,5 @@
-import type { Graph } from "./graph.js";
+import type { Graph } from "../models/graph.js";
+import type { SolveResult } from "../models/models.js";
 
 /**
  * Solver de clique máximo por força bruta (algoritmo exato).
@@ -67,19 +68,23 @@ export class CliqueSolver {
    *   - isClique: O(k²) por subconjunto; dominado por k=n → O(n²) no pior caso por chamada.
    *   - Total: O(2^n · n²).
    *
-   * @returns array de IDs dos vértices do maior clique (vazio se grafo sem arestas)
+   * @returns clique máximo encontrado e total de subconjuntos testados
    */
-  solve(graph: Graph): number[] {
+  solve(graph: Graph): SolveResult {
     const verts = graph.vertices;
     const n = verts.length;
+    let combinationsTested = 0;
     // n iterações no pior caso
     for (let k = n; k >= 1; k--) {
       // C(n,k) subconjuntos por k; ≤ 2^n-1 total
       for (const subset of CliqueSolver.combinations(verts, k)) {
         // O(k²) por chamada; ≤ 2^n-1 chamadas no pior caso
-        if (CliqueSolver.isClique(graph, subset)) return subset;
+        combinationsTested++;
+        if (CliqueSolver.isClique(graph, subset)) {
+          return { clique: subset, combinationsTested };
+        }
       }
     }
-    return [];
+    return { clique: [], combinationsTested };
   }
 }
