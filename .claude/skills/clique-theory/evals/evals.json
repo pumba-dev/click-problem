@@ -1,0 +1,32 @@
+{
+  "skill_name": "clique-theory",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Preciso escrever no artigo a prova de que o Problema do Clique é NP-completo. Faça a redução a partir do 3-CNF-SAT, com as duas direções da equivalência.",
+      "expected_output": "Resposta correta e específica do projeto para: prove-np-completeness",
+      "files": [],
+      "expectations": [
+        "Mostra que CLIQUE ∈ NP com um certificado (o conjunto V') verificável em tempo polinomial O(k²)",
+        "Faz a redução a partir de 3-CNF-SAT (não outro problema) e afirma que a construção é polinomial",
+        "Constrói o grafo com um vértice por literal e liga vértices de cláusulas DIFERENTES cujos literais NÃO são complementares",
+        "Prova a direção (⇒): se φ é satisfatível então G tem clique de tamanho k (um vértice por cláusula, literais verdadeiros não são complementares)",
+        "Prova a direção (⇐): se G tem clique de tamanho k então φ é satisfatível (exatamente um vértice por cláusula, sem literais complementares)",
+        "Cita Karp (1972) e/ou CLRS Teorema 34.11 como fonte"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Qual é a complexidade do nosso solver de força bruta (CliqueSolver.solve) e por quê? Explique melhor caso, pior caso e o efeito do early exit.",
+      "expected_output": "Resposta correta e específica do projeto para: solver-complexity",
+      "files": [],
+      "expectations": [
+        "Afirma pior caso O(2^n · n²)",
+        "Explica a origem: soma sobre k de C(n,k) subconjuntos, cada um verificado por isClique em O(k²)",
+        "Melhor caso O(n²): grafo completo, o primeiro subconjunto (k=n) já é clique",
+        "Espaço O(n) graças ao gerador lazy de combinações (backtracking)",
+        "Diz que o early exit melhora o tempo prático mas NÃO muda a complexidade de pior caso"
+      ]
+    }
+  ]
+}

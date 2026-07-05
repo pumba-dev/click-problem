@@ -1,0 +1,30 @@
+{
+  "skill_name": "clique-codebase",
+  "evals": [
+    {
+      "id": 4,
+      "prompt": "Quero implementar uma heurística para comparar com a força bruta (atividade 6). Qual algoritmo você sugere e como plugo no ViralAnalyzer sem quebrar o resto do código?",
+      "expected_output": "Resposta correta e específica do projeto para: implement-heuristic",
+      "files": [],
+      "expectations": [
+        "Sugere heurística concreta (Bron-Kerbosch com pivoteamento e/ou guloso)",
+        "Propõe uma assinatura/interface comum solve(graph): SolveResult para intercambiar com o baseline",
+        "Indica o ponto de troca no ViralAnalyzer (chamada this.solver.solve(graph) e/ou injeção via construtor)",
+        "Respeita convenções: imports ESM com extensão .js, TypeScript estrito, retorno SolveResult",
+        "Menciona teste de invariante (resultado é clique válido via isClique) e/ou comparação de otimalidade com o baseline"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Como eu rodo o projeto e como monto um benchmark que compara o tempo dos algoritmos por tamanho de entrada?",
+      "expected_output": "Resposta correta e específica do projeto para: run-and-benchmark",
+      "files": [],
+      "expectations": [
+        "Comandos corretos: npm install, npm start (gera report.html), npm test, npm run build",
+        "Explica variar o tamanho n (numUsers) e usar prefProb=1 para que n do grafo seja controlado, sobre várias seeds",
+        "Mede tempo com performance.now() e coleta cliqueSize por n; sugere salvar CSV e/ou rodar via npx tsx",
+        "Reforça reprodutibilidade: seed fixa / PRNG Mulberry32, nunca Math.random"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "skill_name": "viral-application",
+  "evals": [
+    {
+      "id": 2,
+      "prompt": "No resultado padrão do projeto (seed 42), por que a categoria animals ficou em primeiro no ranking? E o que exatamente é o score de interação?",
+      "expected_output": "Resposta correta e específica do projeto para: why-animals-won",
+      "files": [],
+      "expectations": [
+        "Diz que animals vence com clique de tamanho 4 e alcance agregado ~1.201.515",
+        "Explica a regra de ranking: tamanho do clique é o critério primário; alcance agregado só desempata",
+        "Menciona que 4 categorias empataram em clique 4 e/ou que music (clique 3) ficou em último apesar de reach maior que sports",
+        "Explica o score de interação como grau de conexão/sobreposição entre as audiências (reforço cruzado), não apenas seguir-se mutuamente"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Como eu interpreto o report.html gerado? O que significam os nós laranja e as arestas laranjas nos grafos?",
+      "expected_output": "Resposta correta e específica do projeto para: interpret-report",
+      "files": [],
+      "expectations": [
+        "Nó laranja = membro do clique máximo; nó azul = usuário elegível fora do clique",
+        "Aresta laranja/contínua liga dois membros do clique; demais são tracejadas/cinza",
+        "Descreve as abas do relatório (Visão Geral, Usuários, Interações, uma por Categoria, Estatísticas)",
+        "Interpreta o clique laranja como o núcleo recomendado de seed viral"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "skill_name": "sbc-article",
+  "evals": [
+    {
+      "id": 6,
+      "prompt": "Preciso adicionar a seção de Resultados comparando baseline e heurística no artigo SBC, e depois compilar o PDF. O que colocar e quais comandos rodo?",
+      "expected_output": "Resposta correta e específica do projeto para: results-section-and-compile",
+      "files": [],
+      "expectations": [
+        "Aponta o arquivo correto latex/template-latex/sbc-template.tex",
+        "Sugere tabela (booktabs) e/ou gráfico comparando tempo × n e qualidade da solução (cliqueSize / proximidade do ótimo)",
+        "Lembra os requisitos da disciplina: ambiente de execução, testes em diferentes tamanhos de entrada, comparação desempenho+qualidade na conclusão",
+        "Dá o ciclo de compilação: pdflatex → bibtex → pdflatex → pdflatex (ou latexmk -pdf)"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Como cito o Karp e o Cormen no artigo? E por que às vezes as citações aparecem como [?] no PDF?",
+      "expected_output": "Resposta correta e específica do projeto para: citations",
+      "files": [],
+      "expectations": [
+        "Usa as chaves corretas do .bib: \\cite{karp:1972} e \\cite{cormen:2022}",
+        "Explica que o [?] ocorre por não ter rodado bibtex ou por faltar passadas de pdflatex",
+        "Dá o ciclo de compilação que resolve as citações (pdflatex, bibtex, pdflatex x2)"
+      ]
+    }
+  ]
+}

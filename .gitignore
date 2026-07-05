@@ -1,3 +1,7 @@
 node_modules
 dist
 latex
+
+# Skill-creator eval artifacts (runs, benchmark, description-opt logs)
+.claude/skills-eval-workspace/
+.claude/commands/
