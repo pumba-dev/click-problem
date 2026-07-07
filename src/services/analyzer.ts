@@ -1,10 +1,11 @@
 import { Graph } from "../models/graph.js";
-import { CliqueSolver } from "./solver.js";
+import { BruteSolver } from "./solver.js";
 import type {
   ProblemInstance,
   GraphNodeData,
   GraphEdgeData,
   CategoryResult,
+  CliqueAlgorithm,
 } from "../models/models.js";
 
 export type { CategoryResult };
@@ -14,7 +15,7 @@ export type { CategoryResult };
  *
  * Responsável por:
  * - Construir o grafo G_a para cada categoria a partir da instância
- * - Aplicar `CliqueSolver` em cada grafo
+ * - Aplicar `BruteSolver` em cada grafo
  * - Rankear categorias por (cliqueSize DESC, aggregateReach DESC)
  * - Montar os dados de visualização (nós/arestas com flags de clique)
  * - Exibir o ranking no terminal
@@ -22,7 +23,19 @@ export type { CategoryResult };
  * Uso: `new ViralAnalyzer().analyze(instance)`.
  */
 export class ViralAnalyzer {
-  private readonly solver = new CliqueSolver();
+  /**
+   * @param solver algoritmo de clique a usar. Padrão: `BruteSolver` (força
+   *   bruta exata). Injete `new GreedySolver()` para a heurística ou qualquer
+   *   outro `CliqueAlgorithm` no comparativo da atividade 7.
+   * @param adoptionPerEndorsement probabilidade de adesão por endosso único (q)
+   *   na curva de adesão `p = 1 − (1 − q)^k`. Padrão: 0.15 (fallback; a fonte é
+   *   `adoptionPerEndorsement` em config.ts, repassado por `main.ts`). Não afeta
+   *   o clique encontrado — só a métrica de adesão derivada.
+   */
+  constructor(
+    private readonly solver: CliqueAlgorithm = new BruteSolver(),
+    private readonly adoptionPerEndorsement: number = 0.15,
+  ) {}
 
   /**
    * Chave canônica de acesso ao score de interação entre os usuários a e b.
@@ -30,6 +43,21 @@ export class ViralAnalyzer {
    */
   private static key(a: number, b: number): string {
     return `${Math.min(a, b)},${Math.max(a, b)}`;
+  }
+
+  /**
+   * Curva de adesão por prova social: probabilidade de o público compartilhado
+   * aderir após ver `k` endossos independentes, cada um com probabilidade `q`.
+   *
+   *   p(k) = 1 − (1 − q)^k
+   *
+   * Estritamente crescente em k (retornos marginais decrescentes). Vale 0 para
+   * k = 0 (clique vazio). Justifica maximizar o clique: mais membros ⇒ mais
+   * endossos ⇒ maior adesão.
+   */
+  private static adoptionProbability(q: number, k: number): number {
+    if (k <= 0) return 0;
+    return 1 - (1 - q) ** k;
   }
 
   /** Formata um inteiro com separador de milhar no padrão pt-BR. */
@@ -70,7 +98,8 @@ export class ViralAnalyzer {
 
   /**
    * Calcula a soma do alcance (followers) de todos os usuários do clique.
-   * Representa o alcance orgânico potencial do seed viral na categoria.
+   * Representa o alcance agregado do clique de endossos na categoria — total de
+   * pessoas potencialmente atingidas pela prova social do grupo.
    */
   private aggregateReach(instance: ProblemInstance, clique: number[]): number {
     const userMap = new Map(instance.users.map((u) => [u.id, u]));
@@ -135,6 +164,10 @@ export class ViralAnalyzer {
         clique,
         cliqueSize: clique.length,
         aggregateReach: this.aggregateReach(instance, clique),
+        adoptionProbability: ViralAnalyzer.adoptionProbability(
+          this.adoptionPerEndorsement,
+          clique.length,
+        ),
         cliqueMembers,
         nodes,
         edges,
@@ -176,13 +209,18 @@ export class ViralAnalyzer {
       console.log(
         `  Alcance total : ${ViralAnalyzer.formatReach(r.aggregateReach)}`,
       );
+      console.log(
+        `  Adesão est.   : ${(r.adoptionProbability * 100).toFixed(1)}% (prova social, ${r.cliqueSize} endosso(s))`,
+      );
       console.log();
     }
 
     const best = ranked[0];
     if (best && best.cliqueSize > 0) {
       console.log(
-        `=== Melhor categoria para seed viral: ${best.category} (clique=${best.cliqueSize}, alcance=${ViralAnalyzer.formatReach(best.aggregateReach)}) ===\n`,
+        `=== Melhor categoria para campanha de reforço: ${best.category} ` +
+          `(clique=${best.cliqueSize}, alcance=${ViralAnalyzer.formatReach(best.aggregateReach)}, ` +
+          `adesão est.=${(best.adoptionProbability * 100).toFixed(1)}%) ===\n`,
       );
     }
   }

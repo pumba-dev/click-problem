@@ -4,9 +4,12 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/main.ts",
+    "bench": "tsx src/bench/benchmark.ts",
     "build": "tsc",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:latex": "cd latex/template-latex && pdflatex -interaction=nonstopmode -halt-on-error sbc-template.tex && bibtex sbc-template && pdflatex -interaction=nonstopmode -halt-on-error sbc-template.tex && pdflatex -interaction=nonstopmode -halt-on-error sbc-template.tex && cd ../.. && npm run clean:latex",
+    "clean:latex": "node scripts/clean-latex.mjs"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

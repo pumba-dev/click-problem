@@ -17,6 +17,12 @@ linha de comando é suportado.
 
 `reportOutputPath` (padrão `"report.html"`): caminho do HTML gerado, relativo à raiz.
 
+`adoptionPerEndorsement` (padrão `0.15`): q da **curva de adesão** `p = 1 − (1−q)^k`
+(k = tamanho do clique), que modela a prova social / efeito manada. **Não** pertence a
+`GeneratorOptions` — é uma constante global exportada à parte, repassada por `main.ts`
+ao `ViralAnalyzer` e ao `buildStats`. **Não afeta a geração da instância nem o clique
+encontrado** (só a métrica de adesão derivada), logo não impacta a reprodutibilidade.
+
 ### Densidade em função de τ
 
 | τ | p = 1−τ | Densidade |
@@ -30,18 +36,21 @@ linha de comando é suportado.
 | Comando | Ação |
 |---|---|
 | `npm install` | instala tsx, typescript, vitest, @types/node |
-| `npm start` | `tsx src/main.ts` → ranking no terminal + `report.html` |
+| `npm start` | `tsx src/main.ts` → ranking no terminal + `report.html` (embute `bench.json` se existir) |
+| `npm run bench` | `tsx src/bench/benchmark.ts` → gera `bench.json` (baseline × heurística por tamanho de entrada) |
 | `npm test` | `vitest run` (suíte completa, uma passada) |
 | `npm run test:watch` | vitest em modo watch |
 | `npm run build` | `tsc` → `dist/` |
-| `npx tsx <arquivo>.ts` | roda um script TS avulso (ex.: harness de experimentos) |
+| `npm run build:latex` | compila o artigo (`latexmk`); `npm run clean:latex` limpa intermediários |
+| `npx tsx <arquivo>.ts` | roda um script TS avulso |
 
 ## Requisitos de ambiente (reportar no artigo)
 
-O enunciado exige registrar: linguagem/compilador (TypeScript ~5.4 via `tsx`/Node 22),
-sistema operacional, processador e RAM. Node 18+ é o mínimo; o projeto foi validado em
-Node 22. Preencha esses dados na seção de metodologia/resultados do artigo (skill
-**sbc-article**).
+O enunciado exige registrar: linguagem/compilador, sistema operacional, processador e
+RAM. Ambiente já reportado no artigo (Seção "Ambiente de Execução"): Intel Core i5-10400
+(12 threads, 2,90 GHz), 64 GB RAM, Windows 11 (10.0.26200), Node.js 22.22.2, TypeScript
+5.9.3 (via `tsx`), vitest 4.1.5. Node 18+ é o mínimo. Ao rodar em outra máquina, atualize
+esses dados na skill **sbc-article**.
 
 ## Reprodutibilidade — cuidados
 

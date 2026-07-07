@@ -55,7 +55,7 @@ seção de NP-completude do artigo (atividade 5) ou preparar a apresentação.
 
 ## Complexidade do baseline (força bruta)
 
-O `CliqueSolver.solve` enumera subconjuntos em **ordem decrescente de tamanho**
+O `BruteSolver.solve` enumera subconjuntos em **ordem decrescente de tamanho**
 ($k = n \to 1$) e retorna o primeiro que é clique (*early exit*).
 
 - **Pior caso:** $T(n) = \sum_{k=1}^{n} \binom{n}{k} O(k^2) = O(n^2 \cdot 2^n)$.

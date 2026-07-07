@@ -7,7 +7,7 @@ resultados a diferentes públicos. Complementa a seção "Resultados" do artigo.
 
 Após `npm start`, o terminal lista as categorias **em ordem de ranking**. Para cada
 uma: nº de vértices, nº de arestas, tamanho do clique máximo, membros do clique com
-seus alcances e o alcance total. A melhor categoria para seed viral é destacada.
+seus alcances, o alcance total e a adesão estimada. A melhor categoria para a campanha de reforço é destacada.
 
 ## O relatório HTML (`report.html`)
 
@@ -36,7 +36,8 @@ Instância padrão (seed 42, 30 usuários, 5 categorias, τ=0.6):
 
 - **animals** lidera: clique de tamanho **4**, alcance agregado **1.201.515**
   (User 1: 300.950; User 5: 134.211; User 10: 463.992; User 22: 302.362). É a
-  recomendação do sistema para seed viral.
+  recomendação do sistema para a campanha de reforço (4 endossos simultâneos → adesão
+  estimada ~48% com $q=0{,}15$).
 - Quatro das cinco categorias empatam em clique 4; **music** (só 9 usuários elegíveis)
   atinge clique 3 e fica em último — apesar de $R_a$ maior que *sports*. Isso mostra
   que **tamanho do clique domina o ranking**; alcance só desempata.
@@ -44,10 +45,12 @@ Instância padrão (seed 42, 30 usuários, 5 categorias, τ=0.6):
 ## Comunicação por público
 
 ### Para gestores / marketing
-"Encontramos, em cada tema, o **maior grupo de criadores cujas audiências já se
-reforçam entre si** — o núcleo ideal para uma campanha pegar fogo organicamente. Em
-*animals*, esse núcleo tem 4 criadores somando ~1,2 milhão de seguidores: o melhor alvo
-para investir." Nós laranja = o grupo recomendado.
+"Encontramos, em cada tema, o **maior grupo de criadores que falam para a mesma
+audiência** — assim a mesma pessoa vê o produto endossado por vários criadores que já
+segue, e a prova social (efeito manada) dispara a adesão. Em *animals*, esse grupo tem
+4 criadores endossando em conjunto e alcança ~1,2 milhão de seguidores: o melhor alvo
+para investir. Com 4 endossos, a adesão estimada sobe de ~15% (um só criador) para
+~48%." Nós laranja = o grupo recomendado.
 
 ### Para desenvolvedores
 Ver skill **clique-codebase**: cada aba do relatório vem de um `CategoryResult`; o

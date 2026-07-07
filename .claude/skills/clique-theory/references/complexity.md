@@ -1,4 +1,4 @@
-# Análise de complexidade — `CliqueSolver.solve`
+# Análise de complexidade — `BruteSolver.solve`
 
 Referência para a subseção de complexidade do artigo e para os slides. Corresponde
 ao código em `src/services/solver.ts` e ao documento `docs/complexidade_clique_solver.md`.
@@ -11,9 +11,9 @@ solve(graph: Graph): SolveResult {
   const n = verts.length;
   let combinationsTested = 0;
   for (let k = n; k >= 1; k--) {                       // ordem decrescente de tamanho
-    for (const subset of CliqueSolver.combinations(verts, k)) {
+    for (const subset of BruteSolver.combinations(verts, k)) {
       combinationsTested++;
-      if (CliqueSolver.isClique(graph, subset)) {      // primeiro clique = máximo
+      if (BruteSolver.isClique(graph, subset)) {      // primeiro clique = máximo
         return { clique: subset, combinationsTested };
       }
     }

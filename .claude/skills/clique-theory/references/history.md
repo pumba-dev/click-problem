@@ -17,8 +17,9 @@ citação (entradas BibTeX na skill **sbc-article**, `references/bibliography.md
 
 - **Origem social.** O termo "clique" nasce (Luce & Perry, 1949) justamente na análise
   de **redes sociais** — um grupo em que todos se conhecem mutuamente. Isso conecta
-  diretamente à aplicação do projeto (seed viral), fechando um arco de ~75 anos entre
-  a origem do conceito e o caso de uso.
+  diretamente à aplicação do projeto (campanhas por prova social: o clique é o grupo de
+  criadores que endossam o mesmo público), fechando um arco de ~75 anos entre a origem
+  do conceito e o caso de uso.
 - **Intratabilidade.** Karp (1972) coloca CLIQUE entre os 21 problemas NP-completos,
   a partir da NP-completude de SAT (Cook, 1971). Feige et al. (1991) reforçam: não só é
   difícil resolver exatamente como é difícil **aproximar** — justificando heurísticas
@@ -29,7 +30,7 @@ citação (entradas BibTeX na skill **sbc-article**, `references/bibliography.md
 
 ## Relação com o baseline do projeto
 
-O `CliqueSolver` é a abordagem **ingênua** descrita no CLRS (§34.5.1): testar
+O `BruteSolver` é a abordagem **ingênua** descrita no CLRS (§34.5.1): testar
 $\binom{|V|}{k}$ subconjuntos, cada um verificado em $O(k^2)$. Historicamente é o ponto
 de partida antes de algoritmos de backtracking (Harary-Ross, Bron-Kerbosch) e das
 heurísticas modernas.

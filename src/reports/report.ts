@@ -6,6 +6,7 @@ import type {
   CategoryResult,
   GeneratorOptions,
   SimulationStats,
+  BenchmarkReport,
 } from "../models/models.js";
 
 /**
@@ -47,8 +48,8 @@ export class ReportGenerator {
       id: n.id,
       label: n.label,
       color: {
-        background: n.inClique ? "#F28E2B" : "#4E79A7",
-        border: n.inClique ? "#B35C00" : "#2A5A8F",
+        background: n.inClique ? "#eb6834" : "#2a78d6",
+        border: n.inClique ? "#b34a1e" : "#1c5cab",
         highlight: {
           background: n.inClique ? "#FFB05A" : "#6BA3D6",
           border: "#555",
@@ -63,7 +64,7 @@ export class ReportGenerator {
       from: e.from,
       to: e.to,
       color: {
-        color: e.inClique ? "#F28E2B" : "#ccc",
+        color: e.inClique ? "#eb6834" : "#ccc",
         opacity: e.inClique ? 1.0 : 0.6,
       },
       width: e.inClique ? 3 : 1,
@@ -88,8 +89,13 @@ export class ReportGenerator {
    * Gera o bloco HTML de uma categoria: header, stat cards, legenda, grafo e membros do clique.
    * @param r    - dados da categoria
    * @param rank - posição no ranking (1 = melhor)
+   * @param q    - adesão por endosso único, para exibir a curva de adesão da categoria
    */
-  private static buildCategorySection(r: CategoryResult, rank: number): string {
+  private static buildCategorySection(
+    r: CategoryResult,
+    rank: number,
+    q: number,
+  ): string {
     const id = ReportGenerator.slugify(r.category);
     const medal =
       rank === 1
@@ -116,12 +122,18 @@ export class ReportGenerator {
       <h2>${ReportGenerator.capitalize(r.category)}</h2>
       <span class="clique-pill">Clique: ${r.cliqueSize}</span>
     </div>
-    <div class="stats-row">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr)">
       <div class="stat-card"><span class="stat-val">${r.graphVertices}</span><span class="stat-lbl">v&#233;rtices</span></div>
       <div class="stat-card"><span class="stat-val">${r.graphEdgeCount}</span><span class="stat-lbl">arestas</span></div>
       <div class="stat-card accent"><span class="stat-val">${r.cliqueSize}</span><span class="stat-lbl">clique m&#225;ximo</span></div>
       <div class="stat-card"><span class="stat-val">${ReportGenerator.fmtN(r.aggregateReach)}</span><span class="stat-lbl">alcance total</span></div>
+      <div class="stat-card accent"><span class="stat-val">${(r.adoptionProbability * 100).toFixed(1)}%</span><span class="stat-lbl">ades&#227;o estimada</span></div>
     </div>
+    <p class="users-subtitle" style="margin:-.4rem 0 1rem">
+      &#128101; Prova social: com <strong>${r.cliqueSize}</strong> endosso(s) simult&#226;neo(s) e q = ${(q * 100).toFixed(0)}%,
+      ades&#227;o estimada <strong>&#8776; ${(r.adoptionProbability * 100).toFixed(1)}%</strong>
+      &nbsp;<span style="opacity:.8">(p = 1 &#8722; (1 &#8722; q)<sup>k</sup>)</span>
+    </p>
     <div class="graph-legend">
       <span><span class="dot dot-clique"></span>Membro do clique</span>
       <span><span class="dot dot-regular"></span>Fora do clique</span>
@@ -284,7 +296,7 @@ export class ReportGenerator {
     <div class="graph-legend">
       <span><span class="dot" style="background:#1e40af"></span>Alto alcance</span>
       <span><span class="dot" style="background:#dbeafe;border:1px solid #93c5fd"></span>Baixo alcance</span>
-      <span><span class="line" style="background:#F28E2B"></span>Score alto</span>
+      <span><span class="line" style="background:#eb6834"></span>Score alto</span>
       <span><span class="line" style="background:#e2e8f0"></span>Score baixo</span>
       <span><span class="line line-regular"></span>Abaixo do limiar</span>
     </div>
@@ -312,6 +324,7 @@ export class ReportGenerator {
     config: GeneratorOptions,
     generationTimeMs: number,
     analysisTimeMs: number,
+    adoptionPerEndorsement: number,
   ): SimulationStats {
     const allScores = Array.from(instance.interactions.values());
     const totalPossiblePairs = allScores.length;
@@ -353,6 +366,7 @@ export class ReportGenerator {
       maxCliqueSize: cliqueSizes.length > 0 ? Math.max(...cliqueSizes) : 0,
       minCliqueSize: cliqueSizes.length > 0 ? Math.min(...cliqueSizes) : 0,
       highestReachCategory,
+      adoptionPerEndorsement,
     };
   }
 
@@ -386,7 +400,8 @@ export class ReportGenerator {
     <div class="stats-row">
       <div class="stat-card"><span class="stat-val">${stats.config.threshold.toFixed(2)}</span><span class="stat-lbl">limiar (threshold)</span></div>
       <div class="stat-card"><span class="stat-val">${(stats.config.prefProb * 100).toFixed(0)}%</span><span class="stat-lbl">prob. prefer&#234;ncia</span></div>
-      <div class="stat-card" style="grid-column:span 2"><span class="stat-val" style="font-size:1rem">${reachRange}</span><span class="stat-lbl">alcance m&#237;n – m&#225;x (seguidores)</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1rem">${reachRange}</span><span class="stat-lbl">alcance m&#237;n – m&#225;x</span></div>
+      <div class="stat-card accent"><span class="stat-val">${(stats.adoptionPerEndorsement * 100).toFixed(0)}%</span><span class="stat-lbl">q (ades&#227;o/endosso)</span></div>
     </div>
     <p class="users-subtitle" style="margin-top:.5rem">Categorias: ${cats}</p>
   </section>
@@ -441,6 +456,84 @@ export class ReportGenerator {
   }
 
   /**
+   * Gera o conteúdo da aba Benchmark: KPIs, três gráficos (tempo×n em escala log,
+   * acerto do ótimo por n, e trade-off aceleração×qualidade por experimento) e a
+   * tabela de agregados. Se `bench.json` não foi carregado, mostra um aviso com o
+   * comando `npm run bench`.
+   */
+  private static buildBenchmarkSection(benchmark?: BenchmarkReport): string {
+    if (!benchmark || benchmark.runs.length === 0) {
+      return `<section class="card">
+    <h2>Benchmark: For&#231;a Bruta &times; Heur&#237;stica</h2>
+    <p class="users-subtitle">Nenhum dado de benchmark encontrado. Rode <code>npm run bench</code> para gerar <code>bench.json</code> e depois <code>npm start</code> novamente &mdash; a compara&#231;&#227;o baseline &times; heur&#237;stica (tempo e qualidade por tamanho de entrada) aparecer&#225; aqui.</p>
+  </section>`;
+    }
+
+    const aggs = benchmark.aggregates;
+    const last = aggs[aggs.length - 1];
+    const totalRuns = benchmark.runs.length;
+    const totalOptimal = benchmark.runs.filter((r) => r.optimal).length;
+    const totalSub = totalRuns - totalOptimal;
+    const globalOptimalRate =
+      totalRuns > 0 ? (totalOptimal / totalRuns) * 100 : 0;
+
+    const rows = aggs
+      .map((a) => {
+        const sub = a.suboptimalCount > 0;
+        return `<tr${sub ? ' class="clique-user-row"' : ""}>
+          <td>${a.n}</td>
+          <td class="reach-cell">${a.meanTimeBruteMs.toFixed(3)}</td>
+          <td class="reach-cell">${a.meanTimeGreedyMs.toFixed(3)}</td>
+          <td class="reach-cell">${a.speedup.toFixed(1)}&times;</td>
+          <td class="reach-cell">${a.meanSizeBrute.toFixed(2)}</td>
+          <td class="reach-cell">${a.meanSizeGreedy.toFixed(2)}</td>
+          <td class="reach-cell">${(a.qualityRatio * 100).toFixed(1)}%</td>
+          <td class="reach-cell">${(a.optimalRate * 100).toFixed(0)}%</td>
+          <td class="reach-cell">${a.suboptimalCount}${sub ? ' <span class="in-clique-badge" style="background:#d03b3b">sub&#243;timo</span>' : ""}</td>
+        </tr>`;
+      })
+      .join("");
+
+    return `<section class="card">
+    <h2>Benchmark: For&#231;a Bruta (exato) &times; Heur&#237;stica (guloso)</h2>
+    <p class="users-subtitle">Compara&#231;&#227;o real por tamanho de entrada (n = v&#233;rtices do grafo), ${benchmark.seeds.length} seeds por n, &tau; = ${benchmark.threshold.toFixed(2)}. A for&#231;a bruta garante o &#243;timo mas &#233; O(2&#8319;&middot;n&#178;) (teto n&le;${benchmark.bruteCeiling}); o guloso &#233; O(n&#178;) e troca otimalidade por escala. O ponto central da atividade 7: h&#225; casos em que o guloso <strong>n&#227;o acha o &#243;timo, mas resolve muito mais r&#225;pido</strong> &mdash; destacados em vermelho abaixo.</p>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">n&le;${benchmark.bruteCeiling}</span><span class="stat-lbl">teto vi&#225;vel da for&#231;a bruta</span></div>
+      <div class="stat-card accent"><span class="stat-val">${last ? last.speedup.toFixed(0) : "0"}&times;</span><span class="stat-lbl">guloso mais r&#225;pido (n=${last ? last.n : 0})</span></div>
+      <div class="stat-card"><span class="stat-val">${globalOptimalRate.toFixed(0)}%</span><span class="stat-lbl">acerto do &#243;timo (global)</span></div>
+      <div class="stat-card"><span class="stat-val">${totalSub}</span><span class="stat-lbl">casos sub&#243;timos (de ${totalRuns})</span></div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-box"><canvas id="chart-bench-time"></canvas></div>
+      <div class="chart-box"><canvas id="chart-bench-quality"></canvas></div>
+    </div>
+    <div class="chart-box" style="max-width:760px;margin:0 auto 1rem"><canvas id="chart-bench-tradeoff"></canvas></div>
+    <div class="graph-legend">
+      <span><span class="dot" style="background:#eb6834"></span>Guloso atingiu o &#243;timo</span>
+      <span><span class="dot" style="background:#eb6834;box-shadow:0 0 0 2px #d03b3b"></span>Guloso sub&#243;timo (mais r&#225;pido, clique menor)</span>
+    </div>
+    <div class="table-scroll" style="margin-top:1rem">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>n</th>
+            <th style="text-align:right">t Bruta (ms)</th>
+            <th style="text-align:right">t Guloso (ms)</th>
+            <th style="text-align:right">Speedup</th>
+            <th style="text-align:right">|C| Bruta</th>
+            <th style="text-align:right">|C| Guloso</th>
+            <th style="text-align:right">Qualidade</th>
+            <th style="text-align:right">% &#211;timo</th>
+            <th style="text-align:right">Sub&#243;timos</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </section>`;
+  }
+
+  /**
    * Gera e salva o relatório HTML completo em `outputPath`.
    *
    * As redes vis.js são inicializadas de forma lazy (na primeira exibição da aba)
@@ -456,11 +549,146 @@ export class ReportGenerator {
     ranked: CategoryResult[],
     stats: SimulationStats,
     outputPath = "report.html",
+    benchmark?: BenchmarkReport,
   ): void {
     const reportStart = performance.now();
     const labels = JSON.stringify(ranked.map((r) => r.category));
     const cliqueSizes = JSON.stringify(ranked.map((r) => r.cliqueSize));
     const reaches = JSON.stringify(ranked.map((r) => r.aggregateReach));
+
+    // Curva de adesão p = 1 − (1 − q)^k para o gráfico da aba Visão Geral.
+    const q = stats.adoptionPerEndorsement;
+    const qPct = (q * 100).toFixed(0);
+    const maxCliqueK = ranked.reduce((m, r) => Math.max(m, r.cliqueSize), 0);
+    const curveMaxK = Math.max(maxCliqueK + 2, 6);
+    const adoptionCurve: Array<{ x: number; y: number }> = [];
+    for (let k = 1; k <= curveMaxK; k++) {
+      adoptionCurve.push({ x: k, y: Number((1 - (1 - q) ** k).toFixed(4)) });
+    }
+    const adoptionCurveJson = JSON.stringify(adoptionCurve);
+    const adoptionPointsJson = JSON.stringify(
+      ranked
+        .filter((r) => r.cliqueSize > 0)
+        .map((r) => ({
+          x: r.cliqueSize,
+          y: Number(r.adoptionProbability.toFixed(4)),
+          label: ReportGenerator.capitalize(r.category),
+        })),
+    );
+
+    // ── Dados da aba Benchmark (só quando bench.json foi carregado) ──────────
+    const hasBench = !!benchmark && benchmark.runs.length > 0;
+    const EPS_MS = 0.001; // piso p/ escala logarítmica (tempos > 0)
+    const benchTimeBruteJson = hasBench
+      ? JSON.stringify(
+          benchmark!.aggregates.map((a) => ({
+            x: a.n,
+            y: Math.max(a.meanTimeBruteMs, EPS_MS),
+          })),
+        )
+      : "[]";
+    const benchTimeGreedyJson = hasBench
+      ? JSON.stringify(
+          benchmark!.aggregates.map((a) => ({
+            x: a.n,
+            y: Math.max(a.meanTimeGreedyMs, EPS_MS),
+          })),
+        )
+      : "[]";
+    const benchQualityJson = hasBench
+      ? JSON.stringify(
+          benchmark!.aggregates.map((a) => ({
+            x: a.n,
+            y: Number((a.optimalRate * 100).toFixed(1)),
+          })),
+        )
+      : "[]";
+    const benchTradeoffJson = (optimal: boolean): string =>
+      JSON.stringify(
+        benchmark!.runs
+          .filter((r) => r.optimal === optimal)
+          .map((r) => ({
+            x:
+              Math.max(r.timeBruteMs, EPS_MS) / Math.max(r.timeGreedyMs, EPS_MS),
+            y:
+              r.sizeBrute > 0
+                ? Number(((r.sizeGreedy / r.sizeBrute) * 100).toFixed(1))
+                : 100,
+            n: r.n,
+            seed: r.seed,
+          })),
+      );
+    const benchTradeoffOptimalJson = hasBench ? benchTradeoffJson(true) : "[]";
+    const benchTradeoffSubJson = hasBench ? benchTradeoffJson(false) : "[]";
+
+    // Blocos Chart.js da aba Benchmark — só emitidos quando há dados (senão os
+    // canvases não existem e chamar new Chart lançaria erro).
+    const benchmarkChartsJs = hasBench
+      ? `
+  new Chart(document.getElementById('chart-bench-time'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'Força bruta (exato)', data: ${benchTimeBruteJson},
+        borderColor: '#2a78d6', backgroundColor: '#2a78d6', borderWidth: 2, pointRadius: 3, tension: 0.2 },
+      { label: 'Guloso (heurística)', data: ${benchTimeGreedyJson},
+        borderColor: '#eb6834', backgroundColor: '#eb6834', borderWidth: 2, pointRadius: 3, tension: 0.2 }
+    ] },
+    options: {
+      responsive: true, parsing: false,
+      plugins: {
+        title: { display: true, text: 'Tempo médio × tamanho de entrada (escala log)', font: { size: 14 } },
+        legend: { display: true, position: 'bottom' },
+        tooltip: { callbacks: { label: function(ctx){ return ctx.dataset.label + ': n=' + ctx.raw.x + ' → ' + ctx.raw.y.toFixed(3) + ' ms'; } } }
+      },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'n (vértices do grafo)' }, ticks: { stepSize: 2 } },
+        y: { type: 'logarithmic', title: { display: true, text: 'Tempo do solver (ms, log)' } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('chart-bench-quality'), {
+    type: 'line',
+    data: { datasets: [
+      { label: '% de acerto do ótimo', data: ${benchQualityJson},
+        borderColor: '#1baf7a', backgroundColor: '#1baf7a', borderWidth: 2, pointRadius: 3, tension: 0.2, fill: false }
+    ] },
+    options: {
+      responsive: true, parsing: false,
+      plugins: {
+        title: { display: true, text: 'Qualidade do guloso: acerto do ótimo por n', font: { size: 14 } },
+        legend: { display: false },
+        tooltip: { callbacks: { label: function(ctx){ return 'n=' + ctx.raw.x + ' → ' + ctx.raw.y + '% ótimo'; } } }
+      },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'n (vértices do grafo)' }, ticks: { stepSize: 2 } },
+        y: { beginAtZero: true, suggestedMax: 100, title: { display: true, text: '% de runs com clique ótimo' }, ticks: { callback: function(v){ return v + '%'; } } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('chart-bench-tradeoff'), {
+    type: 'scatter',
+    data: { datasets: [
+      { label: 'Guloso ótimo', data: ${benchTradeoffOptimalJson},
+        backgroundColor: '#eb6834', borderColor: '#eb6834', pointRadius: 5, pointHoverRadius: 7 },
+      { label: 'Guloso subótimo (mais rápido, clique menor)', data: ${benchTradeoffSubJson},
+        backgroundColor: '#eb6834', borderColor: '#d03b3b', borderWidth: 2, pointRadius: 7, pointHoverRadius: 9 }
+    ] },
+    options: {
+      responsive: true, parsing: false,
+      plugins: {
+        title: { display: true, text: 'Trade-off: aceleração × qualidade (cada ponto = um experimento)', font: { size: 14 } },
+        legend: { display: true, position: 'bottom' },
+        tooltip: { callbacks: { label: function(ctx){ var d = ctx.raw; return (ctx.datasetIndex === 1 ? 'subótimo ' : 'ótimo ') + 'n=' + d.n + ' seed=' + d.seed + ': ' + d.x.toFixed(1) + '× mais rápido, qualidade ' + d.y.toFixed(0) + '%'; } } }
+      },
+      scales: {
+        x: { type: 'logarithmic', title: { display: true, text: 'Aceleração vs força bruta (×, log)' } },
+        y: { beginAtZero: true, suggestedMax: 105, title: { display: true, text: 'Qualidade |C|guloso / |C|bruta (%)' }, ticks: { callback: function(v){ return v + '%'; } } }
+      }
+    }
+  });`
+      : "";
 
     const cliqueUserIds = new Set<number>(
       ranked.flatMap((r) => r.nodes.filter((n) => n.inClique).map((n) => n.id)),
@@ -475,6 +703,7 @@ export class ReportGenerator {
         <td>${r.graphEdgeCount}</td>
         <td><strong>${r.cliqueSize}</strong></td>
         <td>${ReportGenerator.fmtN(r.aggregateReach)}</td>
+        <td>${(r.adoptionProbability * 100).toFixed(1)}%</td>
         <td>${r.cliqueMembers.map((m) => m.name).join(", ") || "&mdash;"}</td>
       </tr>`,
       )
@@ -492,7 +721,7 @@ export class ReportGenerator {
     const catPanels = ranked
       .map(
         (r, i) =>
-          `<div id="tab-${ReportGenerator.slugify(r.category)}" class="tab-panel" role="tabpanel">${ReportGenerator.buildCategorySection(r, i + 1)}</div>`,
+          `<div id="tab-${ReportGenerator.slugify(r.category)}" class="tab-panel" role="tabpanel">${ReportGenerator.buildCategorySection(r, i + 1, q)}</div>`,
       )
       .join("\n");
 
@@ -527,11 +756,11 @@ export class ReportGenerator {
              background:transparent;border-radius:8px;cursor:pointer;font-size:.88rem;color:#718096;
              font-weight:500;transition:background .15s,color .15s;white-space:nowrap}
     .tab-btn:hover{background:#f0f2f5;color:#2d3748}
-    .tab-btn.active{background:#4E79A7;color:#fff}
+    .tab-btn.active{background:#2a78d6;color:#fff}
     .tab-pill{display:inline-block;background:#e2e8f0;color:#2d3748;border-radius:12px;
               padding:.05rem .5rem;font-size:.75rem;font-weight:700;min-width:1.4rem;text-align:center}
     .tab-btn.active .tab-pill{background:rgba(255,255,255,.25);color:#fff}
-    .tab-pill.best{background:#F28E2B;color:#fff}
+    .tab-pill.best{background:#eb6834;color:#fff}
     .tab-btn.active .tab-pill.best{background:rgba(255,255,255,.3)}
     .tab-divider{width:1px;height:1.5rem;background:#e2e8f0;margin:0 .25rem;flex-shrink:0}
 
@@ -551,7 +780,7 @@ export class ReportGenerator {
     th{background:#edf2f7;text-align:left;padding:.55rem .75rem;font-weight:600;border-bottom:2px solid #cbd5e0;white-space:nowrap}
     td{padding:.5rem .75rem;border-bottom:1px solid #e2e8f0;vertical-align:middle}
     tr:hover td{background:#f7fafc}
-    .rank-link{background:none;border:none;color:#4E79A7;cursor:pointer;font-size:.88rem;font-weight:500;padding:0;text-decoration:underline}
+    .rank-link{background:none;border:none;color:#2a78d6;cursor:pointer;font-size:.88rem;font-weight:500;padding:0;text-decoration:underline}
     .rank-link:hover{color:#2b6cb0}
 
     .users-subtitle{font-size:.83rem;color:#718096;margin-bottom:1rem}
@@ -563,31 +792,31 @@ export class ReportGenerator {
     .clique-user-row td{background:#fffaf0}
     .clique-user-row:hover td{background:#fff3e0}
     .user-name-cell{white-space:nowrap}
-    .in-clique-badge{background:#F28E2B;color:#fff;border-radius:10px;padding:.05rem .5rem;font-size:.7rem;font-weight:700;margin-left:.4rem;vertical-align:middle}
+    .in-clique-badge{background:#eb6834;color:#fff;border-radius:10px;padding:.05rem .5rem;font-size:.7rem;font-weight:700;margin-left:.4rem;vertical-align:middle}
 
     .cat-section{margin-bottom:0}
     .cat-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
     .cat-header h2{font-size:1.25rem;color:#1a365d;flex:1}
     .rank-badge{font-size:1.4rem}
-    .clique-pill{background:#F28E2B;color:#fff;border-radius:20px;padding:.2rem .85rem;font-size:.82rem;font-weight:700}
+    .clique-pill{background:#eb6834;color:#fff;border-radius:20px;padding:.2rem .85rem;font-size:.82rem;font-weight:700}
     .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem}
     @media(max-width:600px){.stats-row{grid-template-columns:repeat(2,1fr)}}
     .stat-card{background:#f7f9fc;border-radius:8px;padding:.9rem;text-align:center;border:1px solid #e2e8f0}
-    .stat-card.accent{background:#fff8f0;border-color:#F28E2B}
+    .stat-card.accent{background:#fff8f0;border-color:#eb6834}
     .stat-val{display:block;font-size:1.45rem;font-weight:700;color:#2d3748}
-    .stat-card.accent .stat-val{color:#C45E00}
+    .stat-card.accent .stat-val{color:#b34a1e}
     .stat-lbl{font-size:.7rem;color:#718096;text-transform:uppercase;letter-spacing:.05em}
     .graph-legend{display:flex;flex-wrap:wrap;gap:.9rem;font-size:.8rem;color:#718096;margin-bottom:.5rem}
     .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.3rem;vertical-align:middle}
-    .dot-clique{background:#F28E2B}.dot-regular{background:#4E79A7}
+    .dot-clique{background:#eb6834}.dot-regular{background:#2a78d6}
     .line{display:inline-block;width:20px;height:3px;margin-right:.3rem;vertical-align:middle;border-radius:2px}
-    .line-clique{background:#F28E2B}
+    .line-clique{background:#eb6834}
     .line-regular{background:transparent;border-top:2px dashed #ccc;height:0}
     .network-box{height:360px;border:1px solid #e2e8f0;border-radius:8px;background:#fafbfc;margin-bottom:1.1rem}
     .network-box--tall{height:480px}
     .members-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#718096;margin-bottom:.65rem}
     .members-grid{display:flex;flex-wrap:wrap;gap:.5rem}
-    .member-card{background:#fff8f0;border:1px solid #F28E2B;border-radius:8px;padding:.45rem .85rem}
+    .member-card{background:#fff8f0;border:1px solid #eb6834;border-radius:8px;padding:.45rem .85rem}
     .member-name{display:block;font-weight:600;font-size:.86rem}
     .member-reach{font-size:.76rem;color:#718096}
     .no-members{color:#a0aec0;font-size:.86rem}
@@ -598,14 +827,15 @@ export class ReportGenerator {
 <body>
 
 <header>
-  <h1>An&#225;lise de Propaga&#231;&#227;o Viral por Clique</h1>
-  <p class="subtitle">${instance.users.length} usu&#225;rios &middot; ${instance.categories.length} categorias &middot; limiar = ${instance.threshold.toFixed(2)}</p>
+  <h1>Propaga&#231;&#227;o Viral por Prova Social &amp; Clique M&#225;ximo</h1>
+  <p class="subtitle">${instance.users.length} usu&#225;rios &middot; ${instance.categories.length} categorias &middot; limiar = ${instance.threshold.toFixed(2)} &middot; efeito manada via clique</p>
 </header>
 
 <nav class="tabs-bar" role="tablist">
   <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')" role="tab">Vis&#227;o Geral</button>
   <button class="tab-btn" data-tab="users" onclick="showTab('users')" role="tab">Usu&#225;rios</button>
   <button class="tab-btn" data-tab="interactions" onclick="showTab('interactions')" role="tab">Intera&#231;&#245;es</button>
+  <button class="tab-btn" data-tab="benchmark" onclick="showTab('benchmark')" role="tab">Benchmark</button>
   <div class="tab-divider" aria-hidden="true"></div>
   ${catTabBtns}
   <div class="tab-divider" aria-hidden="true"></div>
@@ -617,6 +847,7 @@ export class ReportGenerator {
   <div id="tab-overview" class="tab-panel active" role="tabpanel">
     <section class="card">
       <h2>Comparativo entre Categorias</h2>
+      <p class="users-subtitle">Em cada categoria buscamos o <strong>maior grupo de criadores com audi&#234;ncias sobrepostas</strong> (clique m&#225;ximo). Quando todos endossam o mesmo produto, o p&#250;blico comum recebe v&#225;rios endossos simult&#226;neos e a <strong>prova social</strong> (efeito manada) eleva a ades&#227;o. Ranking: tamanho do clique (intensidade do refor&#231;o) e, em empate, alcance agregado (pessoas afetadas).</p>
       <div class="chart-row">
         <div class="chart-box"><canvas id="chart-clique"></canvas></div>
         <div class="chart-box"><canvas id="chart-reach"></canvas></div>
@@ -626,12 +857,18 @@ export class ReportGenerator {
           <thead>
             <tr>
               <th>Rank</th><th>Categoria</th><th>V&#233;rtices</th><th>Arestas</th>
-              <th>Clique M&#225;x.</th><th>Alcance Total</th><th>Membros</th>
+              <th>Clique M&#225;x.</th><th>Alcance Total</th><th>Ades&#227;o est.</th><th>Membros</th>
             </tr>
           </thead>
           <tbody>${rankingRows}</tbody>
         </table>
       </div>
+    </section>
+
+    <section class="card">
+      <h2>Curva de Ades&#227;o por Prova Social</h2>
+      <p class="users-subtitle">Modelo do efeito manada: a chance de ades&#227;o cresce com o n&#250;mero de endossos simult&#226;neos (k = tamanho do clique), segundo <code>p = 1 &#8722; (1 &#8722; q)<sup>k</sup></code> com q = ${qPct}% de ades&#227;o por endosso &#250;nico. Cada ponto laranja &#233; uma categoria no seu clique atual; a linha &#233; a curva te&#243;rica.</p>
+      <div class="chart-box" style="max-width:720px;margin:0 auto"><canvas id="chart-adoption"></canvas></div>
     </section>
   </div>
 
@@ -641,6 +878,10 @@ export class ReportGenerator {
 
   <div id="tab-interactions" class="tab-panel" role="tabpanel">
     ${ReportGenerator.buildInteractionsSection(instance)}
+  </div>
+
+  <div id="tab-benchmark" class="tab-panel" role="tabpanel">
+    ${ReportGenerator.buildBenchmarkSection(benchmark)}
   </div>
 
   ${catPanels}
@@ -653,7 +894,7 @@ export class ReportGenerator {
 
 </div>
 
-<footer>Gerado pelo Click Problem &mdash; An&#225;lise de Clique M&#225;ximo em Grafos de Propaga&#231;&#227;o Viral</footer>
+<footer>Gerado pelo Click Problem &mdash; Clique M&#225;ximo &amp; Prova Social em Redes de Propaga&#231;&#227;o Viral</footer>
 
 <script>
   var netInits = {};
@@ -677,7 +918,7 @@ export class ReportGenerator {
     data: {
       labels: ${labels},
       datasets: [{ label: 'Clique Máximo', data: ${cliqueSizes},
-        backgroundColor: '#4E79A7cc', borderColor: '#4E79A7', borderWidth: 2, borderRadius: 6 }]
+        backgroundColor: '#2a78d6cc', borderColor: '#2a78d6', borderWidth: 2, borderRadius: 6 }]
     },
     options: {
       responsive: true,
@@ -692,13 +933,45 @@ export class ReportGenerator {
     data: {
       labels: ${labels},
       datasets: [{ label: 'Alcance Agregado', data: ${reaches},
-        backgroundColor: '#F28E2Bcc', borderColor: '#F28E2B', borderWidth: 2, borderRadius: 6 }]
+        backgroundColor: '#eb6834cc', borderColor: '#eb6834', borderWidth: 2, borderRadius: 6 }]
     },
     options: {
       responsive: true,
       onClick: function(_e, els) { if (els.length) showTab(${labels}[els[0].index].toLowerCase().replace(/[^a-z0-9]+/g,'-')); },
       plugins: { title: { display: true, text: 'Alcance Agregado do Clique', font: { size: 14 } }, legend: { display: false } },
       scales: { y: { beginAtZero: true, title: { display: true, text: 'Seguidores totais' } } }
+    }
+  });
+
+  new Chart(document.getElementById('chart-adoption'), {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'Curva p = 1 − (1 − q)^k', type: 'line', data: ${adoptionCurveJson},
+          borderColor: '#2b6cb0', backgroundColor: '#2b6cb0', borderWidth: 2,
+          pointRadius: 0, tension: 0.25, fill: false, order: 2 },
+        { label: 'Categorias (clique atual)', data: ${adoptionPointsJson},
+          backgroundColor: '#eb6834', borderColor: '#b34a1e', pointRadius: 6,
+          pointHoverRadius: 8, showLine: false, order: 1 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'Curva de Adesão por Prova Social (q = ${qPct}%)', font: { size: 14 } },
+        legend: { display: true, position: 'bottom' },
+        tooltip: { callbacks: { label: function(ctx) {
+          var d = ctx.raw; var pct = (d.y * 100).toFixed(1) + '%';
+          return (d.label ? d.label + ': ' : '') + 'k=' + d.x + ' → ' + pct;
+        } } }
+      },
+      scales: {
+        x: { type: 'linear', min: 0, ticks: { stepSize: 1 },
+             title: { display: true, text: 'k = tamanho do clique (nº de endossos)' } },
+        y: { beginAtZero: true, suggestedMax: 1,
+             ticks: { callback: function(v) { return Math.round(v * 100) + '%'; } },
+             title: { display: true, text: 'Adesão estimada' } }
+      }
     }
   });
 
@@ -709,8 +982,8 @@ export class ReportGenerator {
       datasets: [{
         label: 'Tempo do solver (ms)',
         data: ${JSON.stringify(stats.categoryTimings.map((t) => parseFloat(t.solveTimeMs.toFixed(3))))},
-        backgroundColor: '#4E79A7cc',
-        borderColor: '#4E79A7',
+        backgroundColor: '#2a78d6cc',
+        borderColor: '#2a78d6',
         borderWidth: 2,
         borderRadius: 6
       }]
@@ -725,6 +998,7 @@ export class ReportGenerator {
       scales: { x: { beginAtZero: true, title: { display: true, text: 'Milissegundos' } } }
     }
   });
+  ${benchmarkChartsJs}
 </script>
 
 </body>

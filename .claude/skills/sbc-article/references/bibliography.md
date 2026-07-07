@@ -37,6 +37,42 @@ Chaves já presentes em `sbc-template.bib` (use nos `\cite{}`):
 }
 ```
 
+## Base comportamental da aplicação (prova social / efeito manada)
+
+Fundamentam a Seção "Aplicação Prática" no novo enquadramento (adesão por reforço).
+Já incluídas em `sbc-template.bib`.
+
+| Chave | Referência | Uso no artigo |
+|---|---|---|
+| `cialdini:2006` | Cialdini, *Influence: The Psychology of Persuasion* | Princípio da prova social |
+| `leibenstein:1950` | Leibenstein, "Bandwagon, Snob, and Veblen Effects..." | Efeito manada (bandwagon) na demanda |
+| `asch:1951` | Asch, "Effects of Group Pressure upon... Judgments" | Conformidade ao grupo |
+| `zajonc:1968` | Zajonc, "Attitudinal Effects of Mere Exposure" | Exposição repetida → afinidade |
+
+```bibtex
+@article{leibenstein:1950,
+  author = {Harvey Leibenstein},
+  title = {Bandwagon, Snob, and Veblen Effects in the Theory of Consumers' Demand},
+  journal = {The Quarterly Journal of Economics}, volume = {64}, number = {2},
+  pages = {183--207}, year = {1950}, doi = {10.2307/1882692}
+}
+@book{cialdini:2006,
+  author = {Robert B. Cialdini}, title = {Influence: The Psychology of Persuasion},
+  edition = {Revised}, publisher = {Harper Business}, year = {2006}
+}
+@incollection{asch:1951,
+  author = {Solomon E. Asch},
+  title = {Effects of Group Pressure upon the Modification and Distortion of Judgments},
+  booktitle = {Groups, Leadership and Men}, editor = {Harold Guetzkow},
+  publisher = {Carnegie Press}, year = {1951}, pages = {177--190}
+}
+@article{zajonc:1968,
+  author = {Robert B. Zajonc}, title = {Attitudinal Effects of Mere Exposure},
+  journal = {Journal of Personality and Social Psychology}, volume = {9},
+  number = {2, Pt.2}, pages = {1--27}, year = {1968}, doi = {10.1037/h0025848}
+}
+```
+
 ## Entradas adicionais sugeridas (histórico e metaheurísticas)
 
 Adicione ao `.bib` se citar a linha do tempo histórica (ver skill **clique-theory**,

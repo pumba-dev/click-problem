@@ -49,20 +49,23 @@ Metodologia, Implementação, Resultados, Conclusão.
   gráficos e tabelas.
 - Para cada algoritmo: estratégia, complexidade, características, resultados.
 
-## Lacunas atuais do artigo (fechar antes da entrega final)
+## Estado do artigo (atividades 6, 7 e 8 — FEITAS)
 
-O `.tex` hoje descreve apenas o **baseline** e menciona heurísticas como *trabalho
-futuro*. Para cumprir as atividades 6 e 7, será preciso:
+O `.tex` está completo para a entrega final e compila em **10 páginas** (dentro do limite SBC):
 
-1. Adicionar uma subseção de **heurística** (estratégia + complexidade) — ver skill
-   **clique-codebase** para implementá-la e **clique-theory** para a complexidade.
-2. Reescrever/expandir **Resultados** com o **comparativo baseline × heurística** por
-   tamanho de entrada (tabela + gráficos tempo×n e qualidade×n).
-3. Ajustar a **Conclusão** para apresentar essa comparação (hoje ela ainda trata a
-   força bruta como solução final).
-4. Incluir a subseção de **ambiente de execução**.
+- **Heurística (ativ. 6):** subseção `GreedySolver` (`\label{sec:heuristica}`).
+- **Resultados comparativos (ativ. 7):** subseção `\label{sec:comparativo}` com a tabela
+  baseline × heurística por tamanho de entrada, alimentada por `bench.json` (`npm run bench`
+  na skill **clique-codebase**). Números-chave: guloso até ~45.751× mais rápido, ótimo em
+  68,8% dos casos.
+- **Ambiente de execução (ativ. 8):** subseção `\label{sec:ambiente}` (i5-10400, 64 GB,
+  Windows 11, Node 22.22.2, TS 5.9.3, vitest 4.1.5).
+- **Conclusão:** apresenta resultados esperados × obtidos e o comparativo desempenho ×
+  qualidade; a heurística consta como **entregue** (não mais "trabalho futuro").
 
-Detalhe do que escrever em cada uma em `article-structure.md`.
+Ao mudar a config ou a máquina: rode `npm run bench` + `npm start`, atualize o ambiente e
+os números, e recompile (`npm run build:latex`); confira que os valores do artigo batem com
+`bench.json`/instância. Detalhe por seção em `article-structure.md`.
 
 ## Compilar
 

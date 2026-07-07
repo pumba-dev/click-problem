@@ -1,8 +1,9 @@
-# Estendendo o sistema: heurística (atividade 6) e experimentos (atividade 7)
+# Estendendo o sistema: solvers e experimentos
 
-Passo a passo para fechar as duas lacunas do trabalho, seguindo as convenções do
-código. Depois de gerar os dados, redija com a skill **sbc-article** e fundamente a
-complexidade com **clique-theory**.
+As atividades 6 (heurística `GreedySolver`) e 7 (harness de benchmark) **já estão
+implementadas** — este guia documenta como foram construídas e como adicionar novos
+solvers. Depois de gerar/atualizar os dados, redija com a skill **sbc-article** e
+fundamente a complexidade com **clique-theory**.
 
 ## 1. Definir uma interface comum de solver
 
@@ -18,7 +19,7 @@ export interface CliqueAlgorithm {
 }
 ```
 
-`CliqueSolver` já satisfaz `solve(graph): SolveResult`; basta adicionar
+`BruteSolver` já satisfaz `solve(graph): SolveResult`; basta adicionar
 `readonly name = "brute-force";`.
 
 ## 2. Implementar uma heurística
@@ -82,7 +83,8 @@ a todos os já escolhidos. Ótimo para demonstrar o **trade-off qualidade × tem
 artigo, pois é rápido mas pode errar o máximo.
 
 ```ts
-// src/services/greedy.ts
+// IMPLEMENTADO: vive em src/services/solver.ts, ao lado de BruteSolver
+// (os algoritmos de solução ficam concentrados no mesmo módulo).
 import type { Graph } from "../models/graph.js";
 import type { CliqueAlgorithm, SolveResult } from "../models/models.js";
 
@@ -114,71 +116,51 @@ Injete o algoritmo por construtor, mantendo o baseline como padrão:
 
 ```ts
 export class ViralAnalyzer {
-  constructor(private readonly solver: CliqueAlgorithm = new CliqueSolver()) {}
-  // ... analyze() usa this.solver.solve(graph) — sem outras mudanças
+  constructor(
+    private readonly solver: CliqueAlgorithm = new BruteSolver(),
+    private readonly adoptionPerEndorsement: number = 0.15, // q da curva de adesão
+  ) {}
+  // ... analyze() usa this.solver.solve(graph) — sem outras mudanças no fluxo do solver
 }
 ```
 
-Uso: `new ViralAnalyzer(new BronKerboschSolver()).analyze(instance)`.
+Uso: `new ViralAnalyzer(new BronKerboschSolver()).analyze(instance)` (o 2º parâmetro `q`
+é opcional; `main.ts` passa `adoptionPerEndorsement` de `config.ts`).
 
 ## 4. Testes obrigatórios do novo solver
 
 Em `src/__tests__/<solver>.test.ts` (vitest), replique os casos de `solver.test.ts` e
 some duas invariantes:
 
-- **Validade:** `CliqueSolver.isClique(g, result.clique) === true` para grafos aleatórios.
+- **Validade:** `BruteSolver.isClique(g, result.clique) === true` para grafos aleatórios.
 - **Qualidade vs baseline:** em instâncias pequenas ($n \le 12$), compare com o
   baseline. Bron-Kerbosch deve **empatar** em cardinalidade (é exato); o guloso pode
   ser `<=` — registre a razão de acerto.
 
-## 5. Harness de experimentos (atividade 7)
+## 5. Harness de experimentos (atividade 7) — já implementado
 
-O enunciado exige testes em **diferentes tamanhos de entrada gerados automaticamente**,
-comparando **tempo** e **qualidade**. Crie um script standalone (não faz parte do
-pipeline de produção):
+O harness vive em `src/bench/benchmark.ts` e roda com **`npm run bench`**, escrevendo
+`bench.json` (consumido por `main.ts` → aba **Benchmark** do relatório). Ele varre
+tamanhos de entrada e compara os dois solvers no **mesmo** grafo. Constantes no topo:
 
 ```ts
-// src/experiments/benchmark.ts   →  rode com:  npx tsx src/experiments/benchmark.ts
-import { InstanceGenerator } from "../services/generator.js";
-import { Graph } from "../models/graph.js";
-import { CliqueSolver } from "../services/solver.js";
-import { GreedySolver } from "../services/greedy.js";
-import type { CliqueAlgorithm } from "../models/models.js";
-
-const SIZES = [8, 10, 12, 14, 16, 18, 20, 22];
-const SEEDS = [1, 2, 3, 4, 5];               // médias sobre várias instâncias
-const algos: CliqueAlgorithm[] = [new CliqueSolver(), new GreedySolver()];
-
-function buildGraph(instance: ReturnType<InstanceGenerator["generate"]>, cat: string): Graph {
-  const ids = instance.users.filter(u => u.preferences[cat]).map(u => u.id);
-  const g = new Graph(ids);
-  for (let i = 0; i < ids.length; i++)
-    for (let j = i + 1; j < ids.length; j++) {
-      const s = instance.interactions.get(`${Math.min(ids[i],ids[j])},${Math.max(ids[i],ids[j])}`) ?? 0;
-      if (s >= instance.threshold) g.addEdge(ids[i], ids[j]);
-    }
-  return g;
-}
-
-console.log("n,seed,algo,cliqueSize,timeMs,effort");
-for (const n of SIZES) {
-  for (const seed of SEEDS) {
-    const inst = new InstanceGenerator().generate({
-      seed, numUsers: n, categories: ["c"], prefProb: 1, threshold: 0.6,
-      reachLow: 1000, reachHigh: 500000,
-    });
-    const g = buildGraph(inst, "c");
-    for (const algo of algos) {
-      const t0 = performance.now();
-      const { clique, combinationsTested } = algo.solve(g);
-      const ms = performance.now() - t0;
-      console.log(`${n},${seed},${algo.name},${clique.length},${ms.toFixed(3)},${combinationsTested}`);
-    }
-  }
-}
+// src/bench/benchmark.ts   →  rode com:  npm run bench
+const N_VALUES = [6, 8, 10, 12, 14, 16, 18, 20];   // tamanhos de entrada (|V_a| = n)
+const SEEDS    = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];  // 10 seeds → médias estáveis
+const THRESHOLD = 0.6;
+const MAX_BRUTE_N = 20;                            // teto de viabilidade da força bruta
 ```
 
-Rodar e salvar CSV: `npx tsx src/experiments/benchmark.ts > bench.csv`.
+Para cada `(n, seed)`: gera uma instância de **categoria única** com `prefProb = 1`
+(⇒ `|V_a| = n` exato) e roda `BruteSolver` **e** `GreedySolver` no mesmo grafo via
+`new ViralAnalyzer(solver).analyze(instance)` (que já mede `solveTime` e devolve
+`cliqueSize`). Agrega por `n` (`speedup`, `qualityRatio`, `optimalRate`) e serializa um
+`BenchmarkReport` (`runs` + `aggregates`) em `bench.json`. É determinístico (seeds fixas)
+e valida a invariante `sizeGreedy ≤ sizeBrute`. `main()` roda no import → **não** importe
+o módulo em testes (use a composição direta, como `benchmark.test.ts`).
+
+Para regenerar com outra faixa/seeds, edite as constantes no topo de `benchmark.ts` e
+rode `npm run bench` de novo.
 
 ### Métricas a extrair para o artigo
 

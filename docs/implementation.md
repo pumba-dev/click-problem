@@ -16,27 +16,35 @@
 
 ### O que é e por que importa?
 
-Imagine que você quer lançar uma campanha viral nas redes sociais sobre cinco temas diferentes: animais, esportes, tecnologia, música e gastronomia. Para que uma campanha "pegue fogo" organicamente, você precisa encontrar um **grupo de pessoas que se conhecem entre si e têm interesse no mesmo tema**. Quanto maior esse grupo e quanto mais seguidores eles têm, maior o potencial de propagação.
+Imagine que você quer vender um produto por meio de influenciadores, em cinco temas diferentes: animais, esportes, tecnologia, música e gastronomia. As pessoas aderem muito mais quando **vários criadores que elas já acompanham endossam o mesmo produto ao mesmo tempo** — é o **efeito manada** (ou prova social): "se todo mundo que eu sigo está usando, deve ser bom". Para isso funcionar, os criadores precisam falar para a **mesma audiência**, de modo que a mesma pessoa receba o recado reforçado, por várias fontes em que confia.
 
-O **Problema do Clique** é exatamente a ferramenta matemática que encontra esse grupo ideal. Um _clique_ em um grafo é um conjunto de pessoas em que **todo mundo se conecta com todo mundo** — o núcleo mais coeso possível.
+O **Problema do Clique** é exatamente a ferramenta matemática que encontra esse grupo ideal. Um _clique_ em um grafo é um conjunto de criadores em que **as audiências de todos se sobrepõem, par a par** — ou seja, o maior grupo capaz de martelar a mesma mensagem sobre o mesmo público. Quanto maior o clique, mais endossos simultâneos e maior a chance de adesão.
 
 ### O que o sistema faz?
 
 1. **Gera uma rede de usuários** com interesses e histórico de interações simulados
-2. **Calcula o quanto as redes de cada par de usuários se conectam** — o _score de interação_
-3. **Monta um grafo por categoria**: liga dois usuários se ambos têm interesse no tema e suas redes interagem acima de um limiar
-4. **Encontra o maior grupo coeso** (maior clique) em cada categoria
-5. **Rankeia as categorias** pela qualidade do grupo encontrado — tamanho do clique e, em empate, pelo alcance total de seguidores
+2. **Calcula o quanto as audiências de cada par de usuários se sobrepõem** — o _score de interação_
+3. **Monta um grafo por categoria**: liga dois criadores se ambos têm interesse no tema e suas audiências se sobrepõem acima de um limiar
+4. **Encontra o maior grupo de audiências sobrepostas** (maior clique) em cada categoria — o grupo que mais reforça a mesma mensagem
+5. **Rankeia as categorias** pela qualidade do grupo — tamanho do clique (intensidade do reforço) e, em empate, pelo alcance total de seguidores (pessoas afetadas)
 
 ### O que é o score de interação?
 
-O score de interação entre dois usuários A e B quantifica **o quanto a audiência de um se engaja com o conteúdo do outro**. Não basta que A e B se sigam mutuamente — o que importa para propagação viral é que os *seguidores* de A curtam, comentem e compartilhem os posts de B (e vice-versa). Quando isso acontece, seedar os dois ao mesmo tempo ativa uma comunidade já conectada, multiplicando o alcance orgânico.
+O score de interação entre dois criadores A e B quantifica **o quanto suas audiências se sobrepõem** — a chance de a mesma pessoa seguir os dois. Não basta que A e B se sigam mutuamente: o que importa é que os *seguidores* de A também consumam o conteúdo de B (e vice-versa), pois só assim a mesma pessoa recebe o endosso dos dois. Quando isso acontece, colocar A e B na mesma campanha faz o público comum ver o produto reforçado por ambos.
 
 Em termos práticos, esse score poderia ser calculado como:
 
 > (interações dos seguidores de A com posts de B + interações dos seguidores de B com posts de A) ÷ total de interações na janela de observação
 
-Quanto mais alto o score, mais as redes dos dois usuários já se conversam — e mais eficiente é incluir ambos no mesmo grupo de seed viral.
+Quanto mais alto o score, mais as audiências dos dois criadores se sobrepõem — e mais forte é o reforço ao incluir ambos na mesma campanha.
+
+### Por que um grupo, e não um influenciador só? (curva de adesão)
+
+Um influenciador sozinho tem uma chance limitada de convencer — digamos, 15% de quem vê. Mas se **quatro** criadores que a pessoa segue endossam o mesmo produto, a chance de ela aderir sobe para ~48%. Cada criador a mais no grupo é mais um "empurrãozinho". A conta (chamada _curva de adesão_) é:
+
+> chance de adesão = 1 − (1 − q)ᵏ
+
+onde **q** é a chance de um único endosso convencer (ex.: 15%) e **k** é o tamanho do grupo (o clique). Com q = 15%: 1 criador → 15%; 3 criadores → 39%; 4 criadores → 48%. É por isso que o sistema busca o **maior** grupo possível: mais endossos simultâneos = mais adesão.
 
 ### Como interpretar o relatório?
 
@@ -48,11 +56,11 @@ O relatório HTML gerado (`report.html`) mostra:
 | **Alcance Total**   | Soma dos seguidores de todos os membros do clique |
 | **Grafo colorido**  | Nós laranja = no clique; azul = fora do clique    |
 | **Arestas laranja** | Conexões dentro do clique                         |
-| **Rank 1**          | Melhor categoria para seed viral                  |
+| **Rank 1**          | Melhor categoria para a campanha de reforço       |
 
 ### Limitação importante
 
-O algoritmo utilizado é **força bruta** — adequado para demonstração com instâncias pequenas. Em redes reais com milhares de usuários, seriam necessárias heurísticas (algoritmos aproximados) por limitações computacionais fundamentais da teoria da computação (NP-Completude).
+O baseline é **força bruta** (exato) — adequado para instâncias pequenas. Por isso o projeto inclui também uma **heurística gulosa** (`GreedySolver`, O(n²)), que troca a garantia de ótimo por rapidez para escalar a redes maiores; o comparativo entre os dois (tempo × qualidade) está na aba **Benchmark** do relatório. A intratabilidade do caso geral decorre da NP-Completude do problema.
 
 ---
 
@@ -68,7 +76,7 @@ src/
 │                  CategoryResult, GraphNodeData, GraphEdgeData)
 ├── graph.ts       class Graph — ADT de grafo não-direcionado
 ├── generator.ts   class InstanceGenerator — geração aleatória reprodutível
-├── solver.ts      class CliqueSolver — força bruta com early exit
+├── solver.ts      BruteSolver (força bruta exata) + GreedySolver (heurística gulosa) — interface CliqueAlgorithm
 ├── analyzer.ts    class ViralAnalyzer — orquestra grafos, solver e ranking
 ├── report.ts      class ReportGenerator — gera o relatório HTML
 └── main.ts        apenas main() — instancia e encadeia as classes
@@ -155,17 +163,24 @@ private static rand(seed: number): () => number {
 }
 ```
 
-### Classe `CliqueSolver` (`solver.ts`)
+### Solvers (`solver.ts`) — interface `CliqueAlgorithm`
+
+Dois algoritmos intercambiáveis, ambos com `solve(graph): SolveResult` (`{ clique, combinationsTested }`), injetáveis no `ViralAnalyzer`:
 
 ```typescript
-class CliqueSolver {
+class BruteSolver implements CliqueAlgorithm {   // baseline exato (atividade 4)
   private static isClique(graph, subset)      // O(k²)
   private static *combinations(arr, k)        // gerador lazy, O(k) espaço
-  solve(graph): number[]                      // O(2^n · n²) com early exit
+  solve(graph): SolveResult                   // O(2^n · n²) com early exit
+}
+
+class GreedySolver implements CliqueAlgorithm {  // heurística (atividade 6)
+  readonly name = "greedy";
+  solve(graph): SolveResult                   // guloso por grau desc., O(n²)
 }
 ```
 
-O método `solve` itera os subconjuntos em ordem decrescente de tamanho (k = n → 1) e retorna ao encontrar o primeiro clique, sem examinar subconjuntos menores.
+O `BruteSolver.solve` itera os subconjuntos em ordem decrescente de tamanho (k = n → 1) e retorna ao encontrar o primeiro clique (early exit) — logo, o máximo. O `GreedySolver` ordena os vértices por grau decrescente (desempate por id) e faz uma varredura única sem retrocesso: rápido (O(n²)), determinístico, mas **não garante o ótimo**. É a base do comparativo baseline × heurística (atividade 7, aba Benchmark).
 
 ### Classe `ViralAnalyzer` (`analyzer.ts`)
 
@@ -253,7 +268,7 @@ function main(): void {
 
 ### Como Estender
 
-- **Novo algoritmo**: adicione um método `solve(graph): number[]` em `CliqueSolver` (ex.: Bron-Kerbosch) e substitua a chamada em `ViralAnalyzer.analyze()`
+- **Novo algoritmo**: crie uma classe que implemente a interface `CliqueAlgorithm` (como `BruteSolver` e `GreedySolver` já fazem) e injete-a no `ViralAnalyzer` (ex.: Bron-Kerbosch)
 - **Nova interface**: declare em `models.ts` e importe nos módulos que precisarem
 - **Novos parâmetros de geração**: expanda `GeneratorOptions` em `models.ts` e implemente em `InstanceGenerator.generate()`
 - **Frontend web**: todas as classes e interfaces são reutilizáveis em Vue 3 — basta importar os módulos
@@ -281,7 +296,15 @@ Para cada categoria $a \in A$, define-se o grafo $G_a = (V_a, E_a)$ onde:
 
 O objetivo é encontrar $C^*_a = \arg\max_{C \subseteq V_a,\ C \text{ é clique}} |C|$ para cada $a$.
 
-O ranking final ordena as categorias por $|C^*_a|$ com desempate por $\sum_{u \in C^*_a} \text{reach}(u)$.
+O ranking final ordena as categorias por $|C^*_a|$ (intensidade do reforço) com desempate por $\sum_{u \in C^*_a} \text{reach}(u)$ (total de pessoas afetadas pelo grupo).
+
+### Curva de Adesão (Fundamento Comportamental)
+
+A escolha de **maximizar** o clique — em vez de qualquer clique — decorre do mecanismo de **prova social** e do **efeito manada** (*bandwagon*): a probabilidade de um usuário aderir a um produto cresce com o número de criadores que ele acompanha e que o endossam simultaneamente (Cialdini, 2006; Leibenstein, 1950; Asch, 1951; Zajonc, 1968). Num clique $C^*_a$, o público compartilhado recebe $k = |C^*_a|$ endossos. Modelando cada endosso como evento independente de adesão com probabilidade $q$:
+
+$$p(\text{adesão}) = 1 - (1 - q)^{k}, \qquad k = |C^*_a|,$$
+
+onde $q \in (0,1)$ é a probabilidade de adesão por endosso único (constante global do modelo; valor ilustrativo $q = 0{,}15$). A função é estritamente crescente e côncava em $k$: para $q = 0{,}15$, tem-se $p(1)=0{,}15$, $p(3)\approx 0{,}39$, $p(4)\approx 0{,}48$. Logo o clique máximo é sempre o de maior adesão esperada — é o elo entre o objetivo combinatório (maior clique) e a métrica de negócio (taxa de adesão). As premissas (endossos independentes, $q$ constante) são simplificações assumidas nesta versão.
 
 ### Análise de Complexidade do Algoritmo Baseline
 
@@ -314,7 +337,7 @@ O gerador usa o modelo de **grafo aleatório de Erdős–Rényi** $G(n, p)$ adap
 
 Para $\tau = 0.6$, temos $p = 0.4$. A esperança do número de arestas em $G_a$ é $\binom{|V_a|}{2} \cdot 0.4$.
 
-A esperança do tamanho do maior clique em $G(n, 0.4)$ é aproximadamente $2\log_{1/0.4}(n) \approx 2.06\log(n)$, compatível com os resultados observados para $n \leq 15$.
+A esperança do tamanho do maior clique em $G(n, 0.4)$ é aproximadamente $2\log_{1/0.4}(n) \approx 2.06\log(n)$, compatível com os resultados observados para $n \leq 20$.
 
 ### Referências
 

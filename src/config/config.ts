@@ -21,7 +21,7 @@ export const simulationConfig: GeneratorOptions = {
   // ── Network size ─────────────────────────────────────────────────────────
   /**
    * Total number of users in the simulated social network.
-   * Keep below ~25 for fast results; the brute-force solver is O(2^n · n²).
+   * Keep below ~30 for fast results; the brute-force solver is O(2^n · n²).
    * Default: 30
    */
   numUsers: 30,
@@ -72,6 +72,21 @@ export const simulationConfig: GeneratorOptions = {
    */
   reachHigh: 500_000,
 };
+
+/**
+ * Probabilidade de adesão por endosso único (q), usada na curva de adesão
+ * `p(adesão) = 1 − (1 − q)^k`, onde k é o tamanho do clique (nº de endossos
+ * simultâneos sobre o público compartilhado). Modela o efeito de prova social /
+ * manada (bandwagon): cada criador a mais no clique é mais um endosso, elevando p.
+ *
+ * Constante GLOBAL do modelo (mesma para todas as categorias). NÃO afeta a geração
+ * da instância nem o clique encontrado — só a métrica de adesão derivada, logo não
+ * interfere na reprodutibilidade (RNF-02).
+ *
+ * Valor em [0, 1]. Ex.: 0.15 ⇒ k=1 → 15%, k=3 → ~39%, k=4 → ~48%.
+ * Default: 0.15
+ */
+export const adoptionPerEndorsement = 0.15;
 
 /**
  * Path where the HTML report will be saved.

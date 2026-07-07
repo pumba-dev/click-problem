@@ -1,3 +1,5 @@
+import type { Graph } from "./graph.js";
+
 /** Representa um usuário da rede social com suas preferências e métricas de alcance. */
 export interface User {
   /** Identificador único (inteiro sequencial a partir de 0). */
@@ -48,12 +50,25 @@ export interface GraphEdgeData {
   inClique: boolean;
 }
 
-/** Retorno de CliqueSolver.solve(): clique encontrado + esforço computacional. */
+/** Retorno de BruteSolver.solve(): clique encontrado + esforço computacional. */
 export interface SolveResult {
   /** IDs dos vértices do clique máximo (vazio se grafo sem arestas). */
   clique: number[];
   /** Total de subconjuntos avaliados antes de encontrar o clique. */
   combinationsTested: number;
+}
+
+/**
+ * Contrato comum a qualquer algoritmo de clique máximo — exato (força bruta,
+ * Bron-Kerbosch) ou heurístico (guloso por grau). Permite que `ViralAnalyzer`
+ * receba o algoritmo por injeção de dependência e torna baseline e heurística
+ * intercambiáveis no harness de experimentos comparativos (atividade 7).
+ */
+export interface CliqueAlgorithm {
+  /** Nome legível para relatórios/gráficos (ex.: "brute-force", "greedy"). */
+  readonly name: string;
+  /** Encontra um clique — máximo se exato, aproximado se heurístico — em `graph`. */
+  solve(graph: Graph): SolveResult;
 }
 
 /** Parâmetros opcionais para controlar a geração de instâncias aleatórias. */
@@ -90,6 +105,12 @@ export interface CategoryResult {
   clique: number[];
   cliqueSize: number;
   aggregateReach: number;
+  /**
+   * Probabilidade estimada de adesão do público sob prova social:
+   * `p = 1 − (1 − q)^cliqueSize`, com q = `adoptionPerEndorsement`. Em [0, 1];
+   * vale 0 para clique vazio. Cresce com o tamanho do clique (nº de endossos).
+   */
+  adoptionProbability: number;
   cliqueMembers: Array<{ name: string; reach: number }>;
   nodes: GraphNodeData[];
   edges: GraphEdgeData[];
@@ -142,4 +163,69 @@ export interface SimulationStats {
   minCliqueSize: number;
   /** Nome da categoria com maior aggregateReach. */
   highestReachCategory: string;
+
+  /**
+   * Probabilidade de adesão por endosso único (q) usada na curva de adesão
+   * `p = 1 − (1 − q)^k`. Reproduzida aqui para o relatório desenhar a curva e
+   * exibir o parâmetro. Espelha `adoptionPerEndorsement` de config.ts.
+   */
+  adoptionPerEndorsement: number;
+}
+
+/**
+ * Um experimento do benchmark (atividade 7): os dois solvers rodados no MESMO
+ * grafo, para um dado tamanho de entrada `n` e uma dada `seed`.
+ */
+export interface BenchmarkRun {
+  /** Tamanho da entrada = nº de vértices do grafo (|V_a|). */
+  n: number;
+  /** Seed do PRNG que gerou a instância deste run. */
+  seed: number;
+  /** Tempo de wall-clock (ms) do `BruteSolver.solve` neste grafo. */
+  timeBruteMs: number;
+  /** Tempo de wall-clock (ms) do `GreedySolver.solve` no MESMO grafo. */
+  timeGreedyMs: number;
+  /** Cardinalidade do clique do baseline exato (= clique máximo). */
+  sizeBrute: number;
+  /** Cardinalidade do clique da heurística gulosa. */
+  sizeGreedy: number;
+  /** `true` se a heurística atingiu o ótimo (`sizeGreedy === sizeBrute`). */
+  optimal: boolean;
+}
+
+/** Agregado por tamanho de entrada `n` (média sobre as seeds). */
+export interface BenchmarkPointAgg {
+  n: number;
+  /** Nº de runs (seeds) agregados neste `n`. */
+  samples: number;
+  meanTimeBruteMs: number;
+  meanTimeGreedyMs: number;
+  /** `meanTimeBruteMs / meanTimeGreedyMs` — quantas vezes o guloso é mais rápido. */
+  speedup: number;
+  meanSizeBrute: number;
+  meanSizeGreedy: number;
+  /** Razão média de qualidade `|C|_greedy / |C|_brute` ∈ (0, 1]. */
+  qualityRatio: number;
+  /** Fração de runs em que o guloso atingiu o ótimo ∈ [0, 1]. */
+  optimalRate: number;
+  /** Nº de runs subótimos (`sizeGreedy < sizeBrute`) neste `n`. */
+  suboptimalCount: number;
+}
+
+/** Relatório completo do benchmark baseline × heurística (atividade 7). */
+export interface BenchmarkReport {
+  /** Timestamp ISO-8601 de quando o benchmark foi gerado. */
+  generatedAt: string;
+  /** Seeds usadas (fixas → reprodutível). */
+  seeds: number[];
+  /** Valores de `n` varridos (crescente). */
+  nValues: number[];
+  /** Limiar τ usado na construção dos grafos. */
+  threshold: number;
+  /** Maior `n` executado pela força bruta (teto de viabilidade). */
+  bruteCeiling: number;
+  /** Todos os runs individuais. */
+  runs: BenchmarkRun[];
+  /** Agregados por `n`, na ordem crescente de `n`. */
+  aggregates: BenchmarkPointAgg[];
 }

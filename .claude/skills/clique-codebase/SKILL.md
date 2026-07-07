@@ -6,12 +6,14 @@ description: >
   graph, generator, solver, analyzer, report, main), rodar/testar/compilar
   (npm start, npm test, npm run build), convenções (TS estrito, classes com
   helpers private static, PRNG Mulberry32, chave canônica de interação), estender
-  o sistema, e especialmente IMPLEMENTAR UMA HEURÍSTICA (Bron-Kerbosch, guloso,
-  simulated annealing — atividade 6) ou RODAR EXPERIMENTOS por tamanho de entrada
-  comparando baseline × heurística (atividade 7). Dispare em pedidos como
-  "adicione um solver", "implemente Bron-Kerbosch", "como rodo o projeto",
-  "escreva um teste", "meça o tempo por n", "gere um benchmark", "compare a
-  heurística com a força bruta" ou "onde fica a classe X".
+  o sistema (adicionar um solver plugável via interface CliqueAlgorithm — o baseline
+  BruteSolver e a heurística GreedySolver já existem; um próximo poderia ser
+  Bron-Kerbosch/metaheurística), a curva de adesão (q, p = 1−(1−q)^k), ou RODAR
+  EXPERIMENTOS por tamanho de entrada comparando baseline × heurística (atividade 7,
+  já implementada: `npm run bench` → bench.json → aba Benchmark do report). Dispare
+  em pedidos como "adicione um solver", "implemente
+  Bron-Kerbosch", "como rodo o projeto", "escreva um teste", "meça o tempo por n",
+  "gere um benchmark", "compare a heurística com a força bruta" ou "onde fica a classe X".
 ---
 
 # Codebase do Click Problem
@@ -33,10 +35,11 @@ src/
 │   └── graph.ts            class Graph — lista de adjacência Map<number,Set<number>>
 ├── services/
 │   ├── generator.ts        class InstanceGenerator — geração reprodutível (Mulberry32)
-│   ├── solver.ts           class CliqueSolver — baseline força bruta, O(2ⁿ·n²)
-│   └── analyzer.ts         class ViralAnalyzer — G_a, solve, ranking, terminal
-├── reports/report.ts       class ReportGenerator — HTML + buildStats() (SimulationStats)
-└── __tests__/*.test.ts     vitest (graph, solver, generator, analyzer)
+│   ├── solver.ts           BruteSolver (exato, O(2ⁿ·n²)) + GreedySolver (guloso, O(n²)) — CliqueAlgorithm
+│   └── analyzer.ts         class ViralAnalyzer — G_a, solve, ranking, curva de adesão, terminal
+├── bench/benchmark.ts      harness atividade 7 — sweep n×seeds, 2 solvers, escreve bench.json
+├── reports/report.ts       class ReportGenerator — HTML + buildStats() + aba Benchmark
+└── __tests__/*.test.ts     vitest (graph, solver, greedy, generator, analyzer, benchmark)
 ```
 
 Dependências (sem ciclos): `models ← graph ← solver`; `generator, analyzer(→solver,graph), report → models`; `main → tudo`.
@@ -45,10 +48,12 @@ Dependências (sem ciclos): `models ← graph ← solver`; `generator, analyzer(
 
 ```bash
 npm install       # tsx, typescript, vitest, @types/node
-npm start         # tsx src/main.ts → imprime ranking + gera report.html
+npm start         # tsx src/main.ts → ranking + gera report.html (embute bench.json se existir)
+npm run bench     # tsx src/bench/benchmark.ts → gera bench.json (baseline × heurística por n)
 npm test          # vitest run (suíte completa)
 npm run test:watch
 npm run build     # tsc → dist/
+npm run build:latex   # compila o artigo (latexmk); clean:latex limpa os intermediários
 ```
 
 - `"type": "module"` + `module/moduleResolution: NodeNext` → **imports usam extensão
@@ -71,34 +76,47 @@ npm run build     # tsc → dist/
 
 ## Contratos-chave
 
-- `CliqueSolver.solve(graph): SolveResult` → `{ clique: number[], combinationsTested: number }`.
-  Para grafo **sem vértices** retorna `clique: []`; para grafo com vértices mas **sem
-  arestas** retorna um clique de **tamanho 1** (um vértice qualquer).
-- `ViralAnalyzer.analyze(instance): CategoryResult[]` já **rankeado**; mede `solveTime`
-  por categoria com `performance.now()`.
-- `ReportGenerator.buildStats(instance, ranked, config, genMs, analysisMs)` (estático)
-  → `SimulationStats`; `new ReportGenerator().generate(instance, ranked, stats, path)`.
+- Dois solvers implementam `CliqueAlgorithm` (`solve(graph): SolveResult` →
+  `{ clique, combinationsTested }`), plugáveis no `ViralAnalyzer`: **`BruteSolver`**
+  (exato, O(2ⁿ·n²)) e **`GreedySolver`** (guloso por grau, O(n²), `name: "greedy"`,
+  determinístico, sem garantia de ótimo). Grafo **sem vértices** → `clique: []`; com
+  vértices mas **sem arestas** → clique de **tamanho 1**.
+- `new ViralAnalyzer(solver?, q?)`; `analyze(instance): CategoryResult[]` já **rankeado**,
+  mede `solveTime` por categoria (`performance.now()`) e calcula
+  `adoptionProbability = 1 − (1−q)^cliqueSize` (curva de adesão / prova social; q =
+  `adoptionPerEndorsement` de config.ts, default 0.15).
+- `ReportGenerator.buildStats(instance, ranked, config, genMs, analysisMs, q)` (estático)
+  → `SimulationStats`; `new ReportGenerator().generate(instance, ranked, stats, path, benchmark?)`
+  — o 5º parâmetro (`BenchmarkReport` de `bench.json`, opcional) alimenta a aba Benchmark.
+- `src/bench/benchmark.ts`: harness da atividade 7. Roda os dois solvers no **mesmo grafo**
+  por (n, seed), agrega e escreve `bench.json` (`BenchmarkReport`: runs + aggregates por n).
+  `main.ts` lê `bench.json` se existir (degrada gracioso se ausente).
 
-## Lacunas do trabalho a fechar aqui (atividades 6 e 7)
+## Estado das atividades 6, 7 e 8 (FEITAS)
 
-O enunciado da disciplina exige, além do baseline:
+1. **Atividade 6 — heurística: FEITA.** `GreedySolver` (guloso por grau decrescente,
+   desempate por id, sem retrocesso, O(n²), determinístico) em `src/services/solver.ts`
+   ao lado do `BruteSolver`; ambos sob `CliqueAlgorithm`. Coberto por `greedy.test.ts`.
+2. **Atividade 7 — avaliação: FEITA.** Harness `src/bench/benchmark.ts` (`npm run bench`)
+   roda o comparativo **baseline × heurística** por tamanho de entrada (n=6..20, 10 seeds,
+   mesmo grafo) → `bench.json`, e o `report.html` o exibe na aba **Benchmark** (tempo×n em
+   log, acerto do ótimo, trade-off aceleração×qualidade). Coberto por `benchmark.test.ts`.
+   Resultado padrão: guloso até ~45.751× mais rápido, ótimo em 68,8% dos casos.
+3. **Atividade 8 — artigo: FEITO.** A skill **sbc-article** cobre a redação; o `.tex` já
+   tem a tabela comparativa, o ambiente de execução e a Conclusão atualizada (10 páginas).
 
-1. **Atividade 6 — heurística.** O código só tem o solver exato. Falta uma heurística
-   (Bron-Kerbosch com pivoteamento, guloso, ou metaheurística). Ela deve expor a mesma
-   assinatura do baseline para ser plugável em `ViralAnalyzer`.
-2. **Atividade 7 — avaliação.** Falta o comparativo **baseline × heurística**:
-   desempenho (tempo) e qualidade da solução (proximidade do ótimo), com **testes em
-   diferentes tamanhos de entrada gerados automaticamente**, em tabelas e gráficos.
-
-O passo a passo de implementação e de experimentação está em
-[references/extending.md](references/extending.md). Depois de gerar os dados, use a
-skill **sbc-article** para redigir a seção de resultados, e a **clique-theory** para a
-complexidade da heurística.
+Para gerar dados frescos: `npm run bench` (determinístico, seeds fixas). Detalhes de como
+o harness foi construído em [references/extending.md](references/extending.md).
 
 ## Testes
 
 vitest, um arquivo por classe em `src/__tests__/`. Padrão: casos normais, limítrofes
 (grafo vazio, sem arestas, IDs não contíguos) e a invariante **"o resultado é sempre
-um clique válido"** verificada via `CliqueSolver.isClique`. Qualquer novo solver deve
-ganhar um teste que confirme essa invariante e, contra o baseline, a **otimalidade**
-(mesma cardinalidade) em instâncias pequenas.
+um clique válido"** verificada via `BruteSolver.isClique`. Novo solver **exato** deve
+ganhar teste de **otimalidade** (mesma cardinalidade do baseline em instâncias pequenas);
+solver **heurístico** deve ganhar teste de **validade** do clique — ele pode ficar
+**abaixo do ótimo** (o `GreedySolver` é coberto por `greedy.test.ts`, incluindo esse
+caso). Métricas derivadas como `adoptionProbability` têm teste próprio em
+`analyzer.test.ts`, e a composição do benchmark (invariante `sizeGreedy ≤ sizeBrute`,
+`|V_a|=n`, reprodutibilidade) em `benchmark.test.ts` — sem importar o harness, que roda
+`main()` no import.

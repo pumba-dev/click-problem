@@ -2,18 +2,20 @@
 name: viral-application
 description: >
   Modelagem da aplicação prática do projeto click-problem: o Problema do Clique
-  Máximo aplicado à detecção de núcleos de propagação viral em redes sociais.
+  Máximo aplicado à seleção de núcleos de reforço para campanhas em redes sociais.
   Use SEMPRE que a tarefa envolver a formulação do problema real — usuários,
   alcance (reach/seguidores), preferências por categoria, score de interação s_uv,
-  limiar (threshold τ), grafo por categoria G_a, clique máximo como seed viral,
-  alcance agregado R_a, o ranking de categorias e seu critério de desempate —, a
-  interpretação dos resultados/relatório, ou a justificativa de por que um clique
-  modela o melhor grupo de seed. Dispare também em pedidos como "explique o score
-  de interação", "por que animals venceu", "como interpretar o report", "qual a
-  intuição da modelagem" ou "explique para um gestor de marketing".
+  limiar (threshold τ), grafo por categoria G_a, clique máximo como grupo de campanha,
+  alcance agregado R_a, o ranking de categorias e seu critério de desempate, o
+  mecanismo de prova social / efeito manada (bandwagon) e a curva de adesão
+  p = 1 − (1−q)^k —, a interpretação dos resultados/relatório, ou a justificativa de
+  por que um clique modela o melhor grupo de campanha. Dispare também em pedidos como
+  "explique o score de interação", "por que animals venceu", "como interpretar o
+  report", "qual a intuição da modelagem", "explique o efeito manada" ou "explique
+  para um gestor de marketing".
 ---
 
-# Aplicação: Propagação Viral por Clique Máximo
+# Aplicação: Campanhas Virais por Prova Social (Clique Máximo)
 
 Como o Problema do Clique é traduzido no problema prático do projeto e como
 interpretar seus resultados. Detalhes formais e de leitura de relatório ficam em
@@ -22,33 +24,52 @@ interpretar seus resultados. Detalhes formais e de leitura de relatório ficam e
 ## O problema prático
 
 Em campanhas de marketing digital segmentadas, o objetivo **não** é apenas alcançar
-muita gente, mas encontrar o **grupo mais coeso** de usuários que compartilham um
-interesse e cujas audiências se **reforçam mutuamente**. Esse núcleo é o *seed* viral
-ideal para disseminação orgânica. Formalmente, ele corresponde ao **maior clique** do
-grafo de interações de cada categoria.
+muita gente, mas provocar **adesão** — que o usuário compre, siga ou aja. A alavanca
+é comportamental: uma pessoa adere muito mais quando **vários criadores que ela
+acompanha endossam o mesmo produto ao mesmo tempo**. Esse reforço positivo vindo do
+próprio meio social dispara o **efeito manada** (*bandwagon*) e a **prova social** —
+o produto parece validado pela comunidade inteira, não por um anúncio isolado.
+
+Para o reforço ocorrer, os criadores precisam falar para **a mesma audiência**: só
+assim a mesma pessoa recebe o endosso repetido, de fontes distintas e confiáveis. O
+**grupo ideal de campanha** é, portanto, o maior conjunto de criadores cujas audiências
+se sobrepõem par a par — formalmente, o **maior clique** do grafo de audiências de cada
+categoria.
 
 Para cada categoria de conteúdo (ex.: *animals*, *sports*, *technology*, *music*,
-*food*), o sistema encontra o maior grupo de criadores totalmente interconectados e
-rankeia as categorias por potencial viral.
+*food*), o sistema encontra esse grupo e rankeia as categorias por intensidade de
+reforço (tamanho do clique) e alcance.
 
 ## Os quatro objetos do modelo
 
 | Objeto | Papel na aplicação |
 |---|---|
 | **Usuário** (vértice) | Criador de conteúdo com `reach` (nº de seguidores) e `preferences` (interesse binário por categoria) |
-| **Score de interação** $s_{uv} \in [0,1]$ | Quão conectadas/sobrepostas são as audiências de $u$ e $v$ — potencial de reforço cruzado |
+| **Score de interação** $s_{uv} \in [0,1]$ | Grau de **sobreposição de audiência** entre $u$ e $v$ — quão provável a mesma pessoa seguir os dois e, logo, receber o endosso repetido |
 | **Threshold** $\tau$ | Limiar: só há aresta se $s_{uv} \ge \tau$. Controla a densidade do grafo |
-| **Alcance agregado** $R_a$ | Soma dos `reach` dos membros do clique — audiência total atingível pelo núcleo |
+| **Alcance agregado** $R_a$ | Soma dos `reach` dos membros do clique — total de pessoas afetadas pelos criadores do grupo (público sob reforço) |
 
 ## Intuição: por que clique?
 
-Um clique exige que **todo par** de criadores tenha audiências suficientemente
-conectadas ($s_{uv} \ge \tau$). Quando isso vale, um seguidor exposto à mensagem por um
-criador a **reencontra, reforçada**, pelos canais de outro criador confiável. Essa
-exposição múltipla a fontes distintas aumenta a propensão à adesão e à recomendação
-orgânica. Um grupo que forma clique é, portanto, uma **rede densa de recomendação**
-que maximiza cobertura *e* intensidade de reforço — não bastando o alcance isolado de
-um só influenciador.
+Um clique exige que **todo par** de criadores compartilhe audiência ($s_{uv} \ge \tau$).
+Quando isso vale, o público comum ao grupo recebe o produto endossado por **todos** os
+membros ao mesmo tempo — prova social plena, sem elo fraco. O seguidor vê a mensagem,
+depois a **reencontra reforçada** pelos outros criadores que segue, e a lê como consenso
+do seu meio: sobe a propensão a aderir (efeito manada) e a recomendar ao próprio círculo.
+
+### Por que o *maior* clique, e não um qualquer?
+
+Num clique de tamanho $k$, o público compartilhado recebe $k$ endossos simultâneos. A
+adesão cresce com o número de endossos independentes — modelada pela **curva de adesão**
+
+$$p(\text{adesão}) = 1 - (1 - q)^{k}, \qquad k = |C^*_a|,$$
+
+onde $q$ é a probabilidade de adesão por endosso único (constante global; ex.: $q=0{,}15$).
+Cada criador a mais no clique é mais um endosso sobre a mesma pessoa:
+$k{=}1 \to 15\%$, $k{=}3 \to 39\%$, $k{=}4 \to 48\%$. Maximizar $|C^*_a|$ maximiza a
+intensidade do reforço — por isso o alvo é o **clique máximo**, não bastando o alcance
+isolado de um só influenciador. A visualização dessa curva no relatório é trabalho da
+fase seguinte; aqui ela justifica a escolha do objetivo.
 
 ## Modelagem formal (resumo)
 
@@ -90,6 +111,9 @@ para públicos não técnicos (gestores), em
   usuários por categoria (ver skill **clique-theory** para a complexidade).
 - Grafo **não ponderado**: $s_{uv}$ só decide a existência da aresta, não pesa o
   ranking. Trabalho futuro: grafos ponderados.
+- **Curva de adesão** com $q$ constante e endossos **independentes** é uma
+  simplificação — na prática $q$ varia por categoria/nicho e há saturação (retornos
+  decrescentes já embutidos, mas sem correlação entre endossos). Refinamento futuro.
 - Dados **sintéticos** e reprodutíveis; não há coleta real de redes sociais.
 
 ## Onde isto entra no projeto

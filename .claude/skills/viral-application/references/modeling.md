@@ -20,20 +20,50 @@ $$V_a = \{u \in U \mid \text{pref}(u,a) = 1\}, \qquad E_a = \{(u,v) \mid u,v \in
 
 Objetivo: $C^*_a = \arg\max_{C \subseteq V_a,\ C \text{ clique}} |C|$.
 
-Alcance agregado: $R_a = \sum_{u \in C^*_a} \text{reach}(u)$.
+Alcance agregado: $R_a = \sum_{u \in C^*_a} \text{reach}(u)$ — total de pessoas
+afetadas pelos criadores do grupo (o público sob reforço).
 
 **Ranking:** ordenar $A$ por $|C^*_a|$ decrescente; desempate por $R_a$ decrescente.
+O tamanho do clique (intensidade do reforço) domina; o alcance só separa empates.
+
+## Curva de adesão (efeito manada)
+
+O objetivo de **maximizar** o clique — e não achar um clique qualquer — vem do
+mecanismo comportamental de **prova social** / **efeito manada** (*bandwagon*): um
+usuário adere mais a um produto quando vários criadores que ele acompanha o endossam
+ao mesmo tempo. Num clique de tamanho $k = |C^*_a|$, o público compartilhado recebe
+$k$ endossos **simultâneos e independentes**. Modelando cada endosso como um evento
+independente de adesão com probabilidade $q$, a probabilidade de o usuário aderir após
+ver todos os $k$ endossos é
+
+$$p(\text{adesão}) = 1 - (1 - q)^{k}.$$
+
+- $q \in (0,1)$: probabilidade de adesão por **endosso único**. Constante global do
+  modelo (mesma para todos os criadores/categorias nesta versão); parametrizável em
+  `config.ts`. Valor ilustrativo: $q = 0{,}15$.
+- $k = |C^*_a|$: nº de endossos = tamanho do clique.
+
+Valores para $q = 0{,}15$: $p(1)=0{,}150$, $p(2)=0{,}278$, $p(3)=0{,}386$,
+$p(4)=0{,}478$. A curva é **côncava crescente** em $k$ (retornos marginais
+decrescentes), mas estritamente crescente — logo o clique máximo é sempre o de maior
+adesão esperada. É isso que liga o objetivo combinatório (maior clique) ao resultado
+de negócio (maior taxa de adesão). Premissas e limites: endossos tratados como
+independentes e $q$ fixo — simplificação (ver "Casos-limite" e as limitações na
+`SKILL.md`).
 
 ## O score de interação (semântica)
 
-$s_{uv}$ quantifica o quanto a audiência de um usuário se engaja com o conteúdo do
-outro — o grau de sobreposição/conexão entre as duas redes. Interpretação prática:
+$s_{uv}$ quantifica o grau de **sobreposição de audiência** entre dois criadores — a
+probabilidade de a mesma pessoa seguir ambos e, portanto, receber o endosso repetido.
+Interpretação prática:
 
 > $s_{uv} \approx \dfrac{(\text{interações dos seguidores de } A \text{ com posts de } B) + (\text{de } B \text{ com posts de } A)}{\text{total de interações na janela de observação}}.$
 
-Não basta $A$ e $B$ se seguirem: o que importa para viralização é que os **seguidores**
-de um engajem com o conteúdo do outro. Quanto maior $s_{uv}$, mais as redes já
-"conversam" e mais eficiente é colocar ambos no mesmo grupo de seed.
+Não basta $A$ e $B$ se seguirem: o que importa para o reforço é que os **seguidores**
+de um também consumam o conteúdo do outro — só assim a mesma pessoa é atingida pelos
+dois. Quanto maior $s_{uv}$, mais as audiências se sobrepõem e mais forte o reforço ao
+colocar ambos na mesma campanha. Um clique garante essa sobreposição **par a par** em
+todo o grupo.
 
 ## Modelo de geração de instâncias
 

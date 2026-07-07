@@ -23,11 +23,11 @@
              background:transparent;border-radius:8px;cursor:pointer;font-size:.88rem;color:#718096;
              font-weight:500;transition:background .15s,color .15s;white-space:nowrap}
     .tab-btn:hover{background:#f0f2f5;color:#2d3748}
-    .tab-btn.active{background:#4E79A7;color:#fff}
+    .tab-btn.active{background:#2a78d6;color:#fff}
     .tab-pill{display:inline-block;background:#e2e8f0;color:#2d3748;border-radius:12px;
               padding:.05rem .5rem;font-size:.75rem;font-weight:700;min-width:1.4rem;text-align:center}
     .tab-btn.active .tab-pill{background:rgba(255,255,255,.25);color:#fff}
-    .tab-pill.best{background:#F28E2B;color:#fff}
+    .tab-pill.best{background:#eb6834;color:#fff}
     .tab-btn.active .tab-pill.best{background:rgba(255,255,255,.3)}
     .tab-divider{width:1px;height:1.5rem;background:#e2e8f0;margin:0 .25rem;flex-shrink:0}
 
@@ -47,7 +47,7 @@
     th{background:#edf2f7;text-align:left;padding:.55rem .75rem;font-weight:600;border-bottom:2px solid #cbd5e0;white-space:nowrap}
     td{padding:.5rem .75rem;border-bottom:1px solid #e2e8f0;vertical-align:middle}
     tr:hover td{background:#f7fafc}
-    .rank-link{background:none;border:none;color:#4E79A7;cursor:pointer;font-size:.88rem;font-weight:500;padding:0;text-decoration:underline}
+    .rank-link{background:none;border:none;color:#2a78d6;cursor:pointer;font-size:.88rem;font-weight:500;padding:0;text-decoration:underline}
     .rank-link:hover{color:#2b6cb0}
 
     .users-subtitle{font-size:.83rem;color:#718096;margin-bottom:1rem}
@@ -59,31 +59,31 @@
     .clique-user-row td{background:#fffaf0}
     .clique-user-row:hover td{background:#fff3e0}
     .user-name-cell{white-space:nowrap}
-    .in-clique-badge{background:#F28E2B;color:#fff;border-radius:10px;padding:.05rem .5rem;font-size:.7rem;font-weight:700;margin-left:.4rem;vertical-align:middle}
+    .in-clique-badge{background:#eb6834;color:#fff;border-radius:10px;padding:.05rem .5rem;font-size:.7rem;font-weight:700;margin-left:.4rem;vertical-align:middle}
 
     .cat-section{margin-bottom:0}
     .cat-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
     .cat-header h2{font-size:1.25rem;color:#1a365d;flex:1}
     .rank-badge{font-size:1.4rem}
-    .clique-pill{background:#F28E2B;color:#fff;border-radius:20px;padding:.2rem .85rem;font-size:.82rem;font-weight:700}
+    .clique-pill{background:#eb6834;color:#fff;border-radius:20px;padding:.2rem .85rem;font-size:.82rem;font-weight:700}
     .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem}
     @media(max-width:600px){.stats-row{grid-template-columns:repeat(2,1fr)}}
     .stat-card{background:#f7f9fc;border-radius:8px;padding:.9rem;text-align:center;border:1px solid #e2e8f0}
-    .stat-card.accent{background:#fff8f0;border-color:#F28E2B}
+    .stat-card.accent{background:#fff8f0;border-color:#eb6834}
     .stat-val{display:block;font-size:1.45rem;font-weight:700;color:#2d3748}
-    .stat-card.accent .stat-val{color:#C45E00}
+    .stat-card.accent .stat-val{color:#b34a1e}
     .stat-lbl{font-size:.7rem;color:#718096;text-transform:uppercase;letter-spacing:.05em}
     .graph-legend{display:flex;flex-wrap:wrap;gap:.9rem;font-size:.8rem;color:#718096;margin-bottom:.5rem}
     .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.3rem;vertical-align:middle}
-    .dot-clique{background:#F28E2B}.dot-regular{background:#4E79A7}
+    .dot-clique{background:#eb6834}.dot-regular{background:#2a78d6}
     .line{display:inline-block;width:20px;height:3px;margin-right:.3rem;vertical-align:middle;border-radius:2px}
-    .line-clique{background:#F28E2B}
+    .line-clique{background:#eb6834}
     .line-regular{background:transparent;border-top:2px dashed #ccc;height:0}
     .network-box{height:360px;border:1px solid #e2e8f0;border-radius:8px;background:#fafbfc;margin-bottom:1.1rem}
     .network-box--tall{height:480px}
     .members-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#718096;margin-bottom:.65rem}
     .members-grid{display:flex;flex-wrap:wrap;gap:.5rem}
-    .member-card{background:#fff8f0;border:1px solid #F28E2B;border-radius:8px;padding:.45rem .85rem}
+    .member-card{background:#fff8f0;border:1px solid #eb6834;border-radius:8px;padding:.45rem .85rem}
     .member-name{display:block;font-weight:600;font-size:.86rem}
     .member-reach{font-size:.76rem;color:#718096}
     .no-members{color:#a0aec0;font-size:.86rem}
@@ -94,14 +94,15 @@
 <body>
 
 <header>
-  <h1>An&#225;lise de Propaga&#231;&#227;o Viral por Clique</h1>
-  <p class="subtitle">30 usu&#225;rios &middot; 5 categorias &middot; limiar = 0.60</p>
+  <h1>Propaga&#231;&#227;o Viral por Prova Social &amp; Clique M&#225;ximo</h1>
+  <p class="subtitle">30 usu&#225;rios &middot; 5 categorias &middot; limiar = 0.60 &middot; efeito manada via clique</p>
 </header>
 
 <nav class="tabs-bar" role="tablist">
   <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')" role="tab">Vis&#227;o Geral</button>
   <button class="tab-btn" data-tab="users" onclick="showTab('users')" role="tab">Usu&#225;rios</button>
   <button class="tab-btn" data-tab="interactions" onclick="showTab('interactions')" role="tab">Intera&#231;&#245;es</button>
+  <button class="tab-btn" data-tab="benchmark" onclick="showTab('benchmark')" role="tab">Benchmark</button>
   <div class="tab-divider" aria-hidden="true"></div>
   <button class="tab-btn" data-tab="animals" onclick="showTab('animals')">
           Animals<span class="tab-pill best">4</span>
@@ -123,6 +124,7 @@
   <div id="tab-overview" class="tab-panel active" role="tabpanel">
     <section class="card">
       <h2>Comparativo entre Categorias</h2>
+      <p class="users-subtitle">Em cada categoria buscamos o <strong>maior grupo de criadores com audi&#234;ncias sobrepostas</strong> (clique m&#225;ximo). Quando todos endossam o mesmo produto, o p&#250;blico comum recebe v&#225;rios endossos simult&#226;neos e a <strong>prova social</strong> (efeito manada) eleva a ades&#227;o. Ranking: tamanho do clique (intensidade do refor&#231;o) e, em empate, alcance agregado (pessoas afetadas).</p>
       <div class="chart-row">
         <div class="chart-box"><canvas id="chart-clique"></canvas></div>
         <div class="chart-box"><canvas id="chart-reach"></canvas></div>
@@ -132,7 +134,7 @@
           <thead>
             <tr>
               <th>Rank</th><th>Categoria</th><th>V&#233;rtices</th><th>Arestas</th>
-              <th>Clique M&#225;x.</th><th>Alcance Total</th><th>Membros</th>
+              <th>Clique M&#225;x.</th><th>Alcance Total</th><th>Ades&#227;o est.</th><th>Membros</th>
             </tr>
           </thead>
           <tbody><tr>
@@ -142,6 +144,7 @@
         <td>65</td>
         <td><strong>4</strong></td>
         <td>1.201.515</td>
+        <td>47.8%</td>
         <td>User 1, User 5, User 10, User 22</td>
       </tr><tr>
         <td>2</td>
@@ -150,6 +153,7 @@
         <td>36</td>
         <td><strong>4</strong></td>
         <td>851.826</td>
+        <td>47.8%</td>
         <td>User 4, User 10, User 19, User 22</td>
       </tr><tr>
         <td>3</td>
@@ -158,6 +162,7 @@
         <td>40</td>
         <td><strong>4</strong></td>
         <td>842.877</td>
+        <td>47.8%</td>
         <td>User 5, User 16, User 18, User 21</td>
       </tr><tr>
         <td>4</td>
@@ -166,6 +171,7 @@
         <td>76</td>
         <td><strong>4</strong></td>
         <td>538.537</td>
+        <td>47.8%</td>
         <td>User 5, User 6, User 11, User 13</td>
       </tr><tr>
         <td>5</td>
@@ -174,10 +180,17 @@
         <td>15</td>
         <td><strong>3</strong></td>
         <td>655.851</td>
+        <td>38.6%</td>
         <td>User 1, User 2, User 14</td>
       </tr></tbody>
         </table>
       </div>
+    </section>
+
+    <section class="card">
+      <h2>Curva de Ades&#227;o por Prova Social</h2>
+      <p class="users-subtitle">Modelo do efeito manada: a chance de ades&#227;o cresce com o n&#250;mero de endossos simult&#226;neos (k = tamanho do clique), segundo <code>p = 1 &#8722; (1 &#8722; q)<sup>k</sup></code> com q = 15% de ades&#227;o por endosso &#250;nico. Cada ponto laranja &#233; uma categoria no seu clique atual; a linha &#233; a curva te&#243;rica.</p>
+      <div class="chart-box" style="max-width:720px;margin:0 auto"><canvas id="chart-adoption"></canvas></div>
     </section>
   </div>
 
@@ -364,11 +377,131 @@
     <div class="graph-legend">
       <span><span class="dot" style="background:#1e40af"></span>Alto alcance</span>
       <span><span class="dot" style="background:#dbeafe;border:1px solid #93c5fd"></span>Baixo alcance</span>
-      <span><span class="line" style="background:#F28E2B"></span>Score alto</span>
+      <span><span class="line" style="background:#eb6834"></span>Score alto</span>
       <span><span class="line" style="background:#e2e8f0"></span>Score baixo</span>
       <span><span class="line line-regular"></span>Abaixo do limiar</span>
     </div>
     <div id="net-interactions" class="network-box network-box--tall"></div>
+  </section>
+  </div>
+
+  <div id="tab-benchmark" class="tab-panel" role="tabpanel">
+    <section class="card">
+    <h2>Benchmark: For&#231;a Bruta (exato) &times; Heur&#237;stica (guloso)</h2>
+    <p class="users-subtitle">Compara&#231;&#227;o real por tamanho de entrada (n = v&#233;rtices do grafo), 10 seeds por n, &tau; = 0.60. A for&#231;a bruta garante o &#243;timo mas &#233; O(2&#8319;&middot;n&#178;) (teto n&le;20); o guloso &#233; O(n&#178;) e troca otimalidade por escala. O ponto central da atividade 7: h&#225; casos em que o guloso <strong>n&#227;o acha o &#243;timo, mas resolve muito mais r&#225;pido</strong> &mdash; destacados em vermelho abaixo.</p>
+    <div class="stats-row">
+      <div class="stat-card"><span class="stat-val">n&le;20</span><span class="stat-lbl">teto vi&#225;vel da for&#231;a bruta</span></div>
+      <div class="stat-card accent"><span class="stat-val">45751&times;</span><span class="stat-lbl">guloso mais r&#225;pido (n=20)</span></div>
+      <div class="stat-card"><span class="stat-val">69%</span><span class="stat-lbl">acerto do &#243;timo (global)</span></div>
+      <div class="stat-card"><span class="stat-val">25</span><span class="stat-lbl">casos sub&#243;timos (de 80)</span></div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-box"><canvas id="chart-bench-time"></canvas></div>
+      <div class="chart-box"><canvas id="chart-bench-quality"></canvas></div>
+    </div>
+    <div class="chart-box" style="max-width:760px;margin:0 auto 1rem"><canvas id="chart-bench-tradeoff"></canvas></div>
+    <div class="graph-legend">
+      <span><span class="dot" style="background:#eb6834"></span>Guloso atingiu o &#243;timo</span>
+      <span><span class="dot" style="background:#eb6834;box-shadow:0 0 0 2px #d03b3b"></span>Guloso sub&#243;timo (mais r&#225;pido, clique menor)</span>
+    </div>
+    <div class="table-scroll" style="margin-top:1rem">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>n</th>
+            <th style="text-align:right">t Bruta (ms)</th>
+            <th style="text-align:right">t Guloso (ms)</th>
+            <th style="text-align:right">Speedup</th>
+            <th style="text-align:right">|C| Bruta</th>
+            <th style="text-align:right">|C| Guloso</th>
+            <th style="text-align:right">Qualidade</th>
+            <th style="text-align:right">% &#211;timo</th>
+            <th style="text-align:right">Sub&#243;timos</th>
+          </tr>
+        </thead>
+        <tbody><tr class="clique-user-row">
+          <td>6</td>
+          <td class="reach-cell">0.092</td>
+          <td class="reach-cell">0.029</td>
+          <td class="reach-cell">3.2&times;</td>
+          <td class="reach-cell">2.60</td>
+          <td class="reach-cell">2.50</td>
+          <td class="reach-cell">96.2%</td>
+          <td class="reach-cell">90%</td>
+          <td class="reach-cell">1 <span class="in-clique-badge" style="background:#d03b3b">sub&#243;timo</span></td>
+        </tr><tr class="clique-user-row">
+          <td>8</td>
+          <td class="reach-cell">0.374</td>
+          <td class="reach-cell">0.007</td>
+          <td class="reach-cell">56.4&times;</td>
+          <td class="reach-cell">3.00</td>
+          <td class="reach-cell">2.70</td>
+          <td class="reach-cell">90.0%</td>
+          <td class="reach-cell">70%</td>
+          <td class="reach-cell">3 <span class="in-clique-badge" style="background:#d03b3b">sub&#243;timo</span></td>
+        </tr><tr class="clique-user-row">
+          <td>10</td>
+          <td class="reach-cell">0.635</td>
+          <td class="reach-cell">0.008</td>
+          <td class="reach-cell">79.9&times;</td>
+          <td class="reach-cell">3.60</td>
+          <td class="reach-cell">3.10</td>
+          <td class="reach-cell">86.1%</td>
+          <td class="reach-cell">50%</td>
+          <td class="reach-cell">5 <span class="in-clique-badge" style="background:#d03b3b">sub&#243;timo</span></td>
+        </tr><tr class="clique-user-row">
+          <td>12</td>
+          <td class="reach-cell">2.405</td>
+          <td class="reach-cell">0.013</td>
+          <td class="reach-cell">181.1&times;</td>
+          <td class="reach-cell">3.90</td>
+          <td class="reach-cell">3.70</td>
+          <td class="reach-cell">94.9%</td>
+          <td class="reach-cell">80%</td>
+          <td class="reach-cell">2 <span class="in-clique-badge" style="background:#d03b3b">sub&#243;timo</span></td>
+        </tr><tr class="clique-user-row">
+          <td>14</td>
+          <td class="reach-cell">9.865</td>
+          <td class="reach-cell">0.015</td>
+          <td class="reach-cell">637.3&times;</td>
+          <td class="reach-cell">4.30</td>
+          <td class="reach-cell">4.10</td>
+          <td class="reach-cell">95.3%</td>
+          <td class="reach-cell">80%</td>
+          <td class="reach-cell">2 <span class="in-clique-badge" style="background:#d03b3b">sub&#243;timo</span></td>
+        </tr><tr class="clique-user-row">
+          <td>16</td>
+          <td class="reach-cell">44.668</td>
+          <td class="reach-cell">0.016</td>
+          <td class="reach-cell">2861.5&times;</td>
+          <td class="reach-cell">4.50</td>
+          <td class="reach-cell">4.00</td>
+          <td class="reach-cell">88.9%</td>
+          <td class="reach-cell">50%</td>
+          <td class="reach-cell">5 <span class="in-clique-badge" style="background:#d03b3b">sub&#243;timo</span></td>
+        </tr><tr class="clique-user-row">
+          <td>18</td>
+          <td class="reach-cell">202.926</td>
+          <td class="reach-cell">0.018</td>
+          <td class="reach-cell">11082.8&times;</td>
+          <td class="reach-cell">4.30</td>
+          <td class="reach-cell">3.90</td>
+          <td class="reach-cell">90.7%</td>
+          <td class="reach-cell">60%</td>
+          <td class="reach-cell">4 <span class="in-clique-badge" style="background:#d03b3b">sub&#243;timo</span></td>
+        </tr><tr class="clique-user-row">
+          <td>20</td>
+          <td class="reach-cell">878.880</td>
+          <td class="reach-cell">0.019</td>
+          <td class="reach-cell">45751.2&times;</td>
+          <td class="reach-cell">4.60</td>
+          <td class="reach-cell">4.30</td>
+          <td class="reach-cell">93.5%</td>
+          <td class="reach-cell">70%</td>
+          <td class="reach-cell">3 <span class="in-clique-badge" style="background:#d03b3b">sub&#243;timo</span></td>
+        </tr></tbody>
+      </table>
+    </div>
   </section>
   </div>
 
@@ -378,12 +511,18 @@
       <h2>Animals</h2>
       <span class="clique-pill">Clique: 4</span>
     </div>
-    <div class="stats-row">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr)">
       <div class="stat-card"><span class="stat-val">18</span><span class="stat-lbl">v&#233;rtices</span></div>
       <div class="stat-card"><span class="stat-val">65</span><span class="stat-lbl">arestas</span></div>
       <div class="stat-card accent"><span class="stat-val">4</span><span class="stat-lbl">clique m&#225;ximo</span></div>
       <div class="stat-card"><span class="stat-val">1.201.515</span><span class="stat-lbl">alcance total</span></div>
+      <div class="stat-card accent"><span class="stat-val">47.8%</span><span class="stat-lbl">ades&#227;o estimada</span></div>
     </div>
+    <p class="users-subtitle" style="margin:-.4rem 0 1rem">
+      &#128101; Prova social: com <strong>4</strong> endosso(s) simult&#226;neo(s) e q = 15%,
+      ades&#227;o estimada <strong>&#8776; 47.8%</strong>
+      &nbsp;<span style="opacity:.8">(p = 1 &#8722; (1 &#8722; q)<sup>k</sup>)</span>
+    </p>
     <div class="graph-legend">
       <span><span class="dot dot-clique"></span>Membro do clique</span>
       <span><span class="dot dot-regular"></span>Fora do clique</span>
@@ -414,12 +553,18 @@
       <h2>Technology</h2>
       <span class="clique-pill">Clique: 4</span>
     </div>
-    <div class="stats-row">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr)">
       <div class="stat-card"><span class="stat-val">15</span><span class="stat-lbl">v&#233;rtices</span></div>
       <div class="stat-card"><span class="stat-val">36</span><span class="stat-lbl">arestas</span></div>
       <div class="stat-card accent"><span class="stat-val">4</span><span class="stat-lbl">clique m&#225;ximo</span></div>
       <div class="stat-card"><span class="stat-val">851.826</span><span class="stat-lbl">alcance total</span></div>
+      <div class="stat-card accent"><span class="stat-val">47.8%</span><span class="stat-lbl">ades&#227;o estimada</span></div>
     </div>
+    <p class="users-subtitle" style="margin:-.4rem 0 1rem">
+      &#128101; Prova social: com <strong>4</strong> endosso(s) simult&#226;neo(s) e q = 15%,
+      ades&#227;o estimada <strong>&#8776; 47.8%</strong>
+      &nbsp;<span style="opacity:.8">(p = 1 &#8722; (1 &#8722; q)<sup>k</sup>)</span>
+    </p>
     <div class="graph-legend">
       <span><span class="dot dot-clique"></span>Membro do clique</span>
       <span><span class="dot dot-regular"></span>Fora do clique</span>
@@ -450,12 +595,18 @@
       <h2>Food</h2>
       <span class="clique-pill">Clique: 4</span>
     </div>
-    <div class="stats-row">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr)">
       <div class="stat-card"><span class="stat-val">15</span><span class="stat-lbl">v&#233;rtices</span></div>
       <div class="stat-card"><span class="stat-val">40</span><span class="stat-lbl">arestas</span></div>
       <div class="stat-card accent"><span class="stat-val">4</span><span class="stat-lbl">clique m&#225;ximo</span></div>
       <div class="stat-card"><span class="stat-val">842.877</span><span class="stat-lbl">alcance total</span></div>
+      <div class="stat-card accent"><span class="stat-val">47.8%</span><span class="stat-lbl">ades&#227;o estimada</span></div>
     </div>
+    <p class="users-subtitle" style="margin:-.4rem 0 1rem">
+      &#128101; Prova social: com <strong>4</strong> endosso(s) simult&#226;neo(s) e q = 15%,
+      ades&#227;o estimada <strong>&#8776; 47.8%</strong>
+      &nbsp;<span style="opacity:.8">(p = 1 &#8722; (1 &#8722; q)<sup>k</sup>)</span>
+    </p>
     <div class="graph-legend">
       <span><span class="dot dot-clique"></span>Membro do clique</span>
       <span><span class="dot dot-regular"></span>Fora do clique</span>
@@ -486,12 +637,18 @@
       <h2>Sports</h2>
       <span class="clique-pill">Clique: 4</span>
     </div>
-    <div class="stats-row">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr)">
       <div class="stat-card"><span class="stat-val">20</span><span class="stat-lbl">v&#233;rtices</span></div>
       <div class="stat-card"><span class="stat-val">76</span><span class="stat-lbl">arestas</span></div>
       <div class="stat-card accent"><span class="stat-val">4</span><span class="stat-lbl">clique m&#225;ximo</span></div>
       <div class="stat-card"><span class="stat-val">538.537</span><span class="stat-lbl">alcance total</span></div>
+      <div class="stat-card accent"><span class="stat-val">47.8%</span><span class="stat-lbl">ades&#227;o estimada</span></div>
     </div>
+    <p class="users-subtitle" style="margin:-.4rem 0 1rem">
+      &#128101; Prova social: com <strong>4</strong> endosso(s) simult&#226;neo(s) e q = 15%,
+      ades&#227;o estimada <strong>&#8776; 47.8%</strong>
+      &nbsp;<span style="opacity:.8">(p = 1 &#8722; (1 &#8722; q)<sup>k</sup>)</span>
+    </p>
     <div class="graph-legend">
       <span><span class="dot dot-clique"></span>Membro do clique</span>
       <span><span class="dot dot-regular"></span>Fora do clique</span>
@@ -522,12 +679,18 @@
       <h2>Music</h2>
       <span class="clique-pill">Clique: 3</span>
     </div>
-    <div class="stats-row">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr)">
       <div class="stat-card"><span class="stat-val">9</span><span class="stat-lbl">v&#233;rtices</span></div>
       <div class="stat-card"><span class="stat-val">15</span><span class="stat-lbl">arestas</span></div>
       <div class="stat-card accent"><span class="stat-val">3</span><span class="stat-lbl">clique m&#225;ximo</span></div>
       <div class="stat-card"><span class="stat-val">655.851</span><span class="stat-lbl">alcance total</span></div>
+      <div class="stat-card accent"><span class="stat-val">38.6%</span><span class="stat-lbl">ades&#227;o estimada</span></div>
     </div>
+    <p class="users-subtitle" style="margin:-.4rem 0 1rem">
+      &#128101; Prova social: com <strong>3</strong> endosso(s) simult&#226;neo(s) e q = 15%,
+      ades&#227;o estimada <strong>&#8776; 38.6%</strong>
+      &nbsp;<span style="opacity:.8">(p = 1 &#8722; (1 &#8722; q)<sup>k</sup>)</span>
+    </p>
     <div class="graph-legend">
       <span><span class="dot dot-clique"></span>Membro do clique</span>
       <span><span class="dot dot-regular"></span>Fora do clique</span>
@@ -555,7 +718,7 @@
       <section class="card">
     <h2>Metadados da Simula&#231;&#227;o</h2>
     <div class="stats-row">
-      <div class="stat-card"><span class="stat-val" style="font-size:1rem">30/04/2026, 01:58:22</span><span class="stat-lbl">data / hora</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1rem">06/07/2026, 22:28:16</span><span class="stat-lbl">data / hora</span></div>
       <div class="stat-card"><span class="stat-val">42</span><span class="stat-lbl">seed (PRNG)</span></div>
       <div class="stat-card"><span class="stat-val">30</span><span class="stat-lbl">usu&#225;rios</span></div>
       <div class="stat-card"><span class="stat-val">5</span><span class="stat-lbl">categorias</span></div>
@@ -563,7 +726,8 @@
     <div class="stats-row">
       <div class="stat-card"><span class="stat-val">0.60</span><span class="stat-lbl">limiar (threshold)</span></div>
       <div class="stat-card"><span class="stat-val">50%</span><span class="stat-lbl">prob. prefer&#234;ncia</span></div>
-      <div class="stat-card" style="grid-column:span 2"><span class="stat-val" style="font-size:1rem">1.000 – 500.000</span><span class="stat-lbl">alcance m&#237;n – m&#225;x (seguidores)</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1rem">1.000 – 500.000</span><span class="stat-lbl">alcance m&#237;n – m&#225;x</span></div>
+      <div class="stat-card accent"><span class="stat-val">15%</span><span class="stat-lbl">q (ades&#227;o/endosso)</span></div>
     </div>
     <p class="users-subtitle" style="margin-top:.5rem">Categorias: animals, sports, technology, music, food</p>
   </section>
@@ -571,10 +735,10 @@
   <section class="card">
     <h2>Desempenho de Processamento</h2>
     <div class="stats-row">
-      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">0.528 ms</span><span class="stat-lbl">gera&#231;&#227;o da inst&#226;ncia</span></div>
-      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">1188.845 ms</span><span class="stat-lbl">an&#225;lise (todas categorias)</span></div>
-      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">2.718 ms</span><span class="stat-lbl">gera&#231;&#227;o do relat&#243;rio</span></div>
-      <div class="stat-card accent"><span class="stat-val" style="font-size:1.1rem">1192.091 ms</span><span class="stat-lbl">tempo total</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">0.844 ms</span><span class="stat-lbl">gera&#231;&#227;o da inst&#226;ncia</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">1510.567 ms</span><span class="stat-lbl">an&#225;lise (todas categorias)</span></div>
+      <div class="stat-card"><span class="stat-val" style="font-size:1.1rem">4.213 ms</span><span class="stat-lbl">gera&#231;&#227;o do relat&#243;rio</span></div>
+      <div class="stat-card accent"><span class="stat-val" style="font-size:1.1rem">1515.624 ms</span><span class="stat-lbl">tempo total</span></div>
     </div>
     <div class="chart-box" style="max-width:640px;margin-top:.5rem">
       <canvas id="chart-timing"></canvas>
@@ -590,23 +754,23 @@
         </thead>
         <tbody><tr>
           <td>Animals</td>
-          <td class="reach-cell">233.650</td>
+          <td class="reach-cell">288.306</td>
           <td class="reach-cell">258.361</td>
         </tr><tr>
           <td>Technology</td>
-          <td class="reach-cell">19.823</td>
+          <td class="reach-cell">32.137</td>
           <td class="reach-cell">31.231</td>
         </tr><tr>
           <td>Food</td>
-          <td class="reach-cell">24.584</td>
+          <td class="reach-cell">30.296</td>
           <td class="reach-cell">31.402</td>
         </tr><tr>
           <td>Sports</td>
-          <td class="reach-cell">891.285</td>
+          <td class="reach-cell">1127.863</td>
           <td class="reach-cell">1.043.366</td>
         </tr><tr>
           <td>Music</td>
-          <td class="reach-cell">0.181</td>
+          <td class="reach-cell">0.348</td>
           <td class="reach-cell">385</td>
         </tr></tbody>
       </table>
@@ -640,7 +804,7 @@
 
 </div>
 
-<footer>Gerado pelo Click Problem &mdash; An&#225;lise de Clique M&#225;ximo em Grafos de Propaga&#231;&#227;o Viral</footer>
+<footer>Gerado pelo Click Problem &mdash; Clique M&#225;ximo &amp; Prova Social em Redes de Propaga&#231;&#227;o Viral</footer>
 
 <script>
   var netInits = {};
@@ -660,8 +824,8 @@
     var c=document.getElementById('net-animals');
     if(!c)return;
     new vis.Network(c,{
-      nodes:new vis.DataSet([{"id":0,"label":"User 1\n300.950","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":2,"label":"User 3\n373.123","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":3,"label":"User 4\n2.917","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":4,"label":"User 5\n134.211","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":6,"label":"User 7\n19.682","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":7,"label":"User 8\n105.545","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":8,"label":"User 9\n142.819","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":9,"label":"User 10\n463.992","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":10,"label":"User 11\n56.360","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":14,"label":"User 15\n148.309","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":17,"label":"User 18\n486.400","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":21,"label":"User 22\n302.362","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":22,"label":"User 23\n146.454","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":25,"label":"User 26\n447.925","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":28,"label":"User 29\n289.190","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":29,"label":"User 30\n406.038","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
-      edges:new vis.DataSet([{"from":0,"to":4,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":9,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":14,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":6,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":7,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":9,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":10,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":7,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":14,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":9,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":14,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":28,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+      nodes:new vis.DataSet([{"id":0,"label":"User 1\n300.950","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":2,"label":"User 3\n373.123","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":3,"label":"User 4\n2.917","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":4,"label":"User 5\n134.211","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":6,"label":"User 7\n19.682","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":7,"label":"User 8\n105.545","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":8,"label":"User 9\n142.819","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":9,"label":"User 10\n463.992","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":10,"label":"User 11\n56.360","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":14,"label":"User 15\n148.309","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":17,"label":"User 18\n486.400","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":21,"label":"User 22\n302.362","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":22,"label":"User 23\n146.454","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":25,"label":"User 26\n447.925","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":28,"label":"User 29\n289.190","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":29,"label":"User 30\n406.038","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":0,"to":4,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":0,"to":9,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":0,"to":21,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":0,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":14,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":6,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":7,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":9,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":4,"to":10,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":21,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":4,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":7,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":14,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":21,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":9,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":14,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":14,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":28,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
     },{
       physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
       edges:{smooth:{type:'continuous'}},
@@ -672,8 +836,8 @@
     var c=document.getElementById('net-technology');
     if(!c)return;
     new vis.Network(c,{
-      nodes:new vis.DataSet([{"id":1,"label":"User 2\n137.340","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":3,"label":"User 4\n2.917","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":9,"label":"User 10\n463.992","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":10,"label":"User 11\n56.360","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":11,"label":"User 12\n39.713","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":15,"label":"User 16\n216.513","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":16,"label":"User 17\n393.185","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":18,"label":"User 19\n82.555","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":19,"label":"User 20\n163.862","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":21,"label":"User 22\n302.362","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":22,"label":"User 23\n146.454","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":23,"label":"User 24\n286.603","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":28,"label":"User 29\n289.190","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
-      edges:new vis.DataSet([{"from":1,"to":3,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":9,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":3,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":18,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":3,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":3,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":18,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":9,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":9,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":11,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":21,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":18,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":26,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+      nodes:new vis.DataSet([{"id":1,"label":"User 2\n137.340","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":3,"label":"User 4\n2.917","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":9,"label":"User 10\n463.992","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":10,"label":"User 11\n56.360","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":11,"label":"User 12\n39.713","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":15,"label":"User 16\n216.513","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":16,"label":"User 17\n393.185","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":18,"label":"User 19\n82.555","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":19,"label":"User 20\n163.862","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":21,"label":"User 22\n302.362","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":22,"label":"User 23\n146.454","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":23,"label":"User 24\n286.603","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":28,"label":"User 29\n289.190","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":1,"to":3,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":9,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":3,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":18,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":3,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":21,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":3,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":18,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":9,"to":21,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":9,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":11,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":21,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":18,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":26,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
     },{
       physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
       edges:{smooth:{type:'continuous'}},
@@ -684,8 +848,8 @@
     var c=document.getElementById('net-food');
     if(!c)return;
     new vis.Network(c,{
-      nodes:new vis.DataSet([{"id":3,"label":"User 4\n2.917","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":4,"label":"User 5\n134.211","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":5,"label":"User 6\n87.329","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":7,"label":"User 8\n105.545","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":9,"label":"User 10\n463.992","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":11,"label":"User 12\n39.713","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":15,"label":"User 16\n216.513","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":16,"label":"User 17\n393.185","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":17,"label":"User 18\n486.400","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":19,"label":"User 20\n163.862","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":20,"label":"User 21\n5.753","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":23,"label":"User 24\n286.603","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
-      edges:new vis.DataSet([{"from":3,"to":7,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":5,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":15,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":17,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":20,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":20,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":11,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":17,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":15,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":20,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":15,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":20,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":20,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":17,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":20,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":20,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":20,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":26,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+      nodes:new vis.DataSet([{"id":3,"label":"User 4\n2.917","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":4,"label":"User 5\n134.211","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":5,"label":"User 6\n87.329","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":7,"label":"User 8\n105.545","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":9,"label":"User 10\n463.992","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":11,"label":"User 12\n39.713","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":15,"label":"User 16\n216.513","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":16,"label":"User 17\n393.185","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":17,"label":"User 18\n486.400","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":19,"label":"User 20\n163.862","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":20,"label":"User 21\n5.753","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":23,"label":"User 24\n286.603","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":3,"to":7,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":3,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":5,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":9,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":15,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":4,"to":17,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":4,"to":20,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":4,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":20,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":11,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":7,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":9,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":11,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":17,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":15,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":20,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":15,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":20,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":20,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":17,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":20,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":20,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":20,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":26,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
     },{
       physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
       edges:{smooth:{type:'continuous'}},
@@ -696,8 +860,8 @@
     var c=document.getElementById('net-sports');
     if(!c)return;
     new vis.Network(c,{
-      nodes:new vis.DataSet([{"id":2,"label":"User 3\n373.123","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":4,"label":"User 5\n134.211","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":5,"label":"User 6\n87.329","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":8,"label":"User 9\n142.819","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":10,"label":"User 11\n56.360","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":12,"label":"User 13\n260.637","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":13,"label":"User 14\n217.561","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":15,"label":"User 16\n216.513","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":16,"label":"User 17\n393.185","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":18,"label":"User 19\n82.555","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":19,"label":"User 20\n163.862","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":21,"label":"User 22\n302.362","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":22,"label":"User 23\n146.454","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":23,"label":"User 24\n286.603","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":25,"label":"User 26\n447.925","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":28,"label":"User 29\n289.190","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":29,"label":"User 30\n406.038","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
-      edges:new vis.DataSet([{"from":2,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":5,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":10,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":12,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":4,"to":15,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":10,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":5,"to":12,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":5,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":15,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":12,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":10,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":15,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":26,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":27,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":28,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+      nodes:new vis.DataSet([{"id":2,"label":"User 3\n373.123","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":4,"label":"User 5\n134.211","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":5,"label":"User 6\n87.329","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":8,"label":"User 9\n142.819","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":10,"label":"User 11\n56.360","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":12,"label":"User 13\n260.637","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":13,"label":"User 14\n217.561","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":15,"label":"User 16\n216.513","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":16,"label":"User 17\n393.185","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":18,"label":"User 19\n82.555","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":19,"label":"User 20\n163.862","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":21,"label":"User 22\n302.362","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":22,"label":"User 23\n146.454","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":23,"label":"User 24\n286.603","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":25,"label":"User 26\n447.925","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":26,"label":"User 27\n118.468","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":28,"label":"User 29\n289.190","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":29,"label":"User 30\n406.038","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":2,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":2,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":5,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":4,"to":8,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":10,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":4,"to":12,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":4,"to":15,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":4,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":10,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":5,"to":12,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":5,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":15,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":8,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":12,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":10,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":10,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":15,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":12,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":16,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":19,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":15,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":18,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":16,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":18,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":21,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":19,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":23,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":21,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":28,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":22,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":25,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":23,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":26,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":25,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":26,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":27,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":28,"to":29,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
     },{
       physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
       edges:{smooth:{type:'continuous'}},
@@ -708,8 +872,8 @@
     var c=document.getElementById('net-music');
     if(!c)return;
     new vis.Network(c,{
-      nodes:new vis.DataSet([{"id":0,"label":"User 1\n300.950","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":1,"label":"User 2\n137.340","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":5,"label":"User 6\n87.329","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":6,"label":"User 7\n19.682","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":13,"label":"User 14\n217.561","color":{"background":"#F28E2B","border":"#B35C00","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":17,"label":"User 18\n486.400","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":22,"label":"User 23\n146.454","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#4E79A7","border":"#2A5A8F","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
-      edges:new vis.DataSet([{"from":0,"to":1,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":5,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":13,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":0,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":6,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":13,"color":{"color":"#F28E2B","opacity":1},"width":3,"dashes":false},{"from":1,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":6,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
+      nodes:new vis.DataSet([{"id":0,"label":"User 1\n300.950","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":1,"label":"User 2\n137.340","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":5,"label":"User 6\n87.329","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":6,"label":"User 7\n19.682","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":13,"label":"User 14\n217.561","color":{"background":"#eb6834","border":"#b34a1e","highlight":{"background":"#FFB05A","border":"#555"}},"font":{"color":"#fff","size":13},"size":28,"borderWidth":3},{"id":17,"label":"User 18\n486.400","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":22,"label":"User 23\n146.454","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":24,"label":"User 25\n197.933","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1},{"id":27,"label":"User 28\n85.482","color":{"background":"#2a78d6","border":"#1c5cab","highlight":{"background":"#6BA3D6","border":"#555"}},"font":{"color":"#fff","size":13},"size":20,"borderWidth":1}]),
+      edges:new vis.DataSet([{"from":0,"to":1,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":0,"to":5,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":13,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":0,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":0,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":6,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":1,"to":13,"color":{"color":"#eb6834","opacity":1},"width":3,"dashes":false},{"from":1,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":6,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":13,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":5,"to":24,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":6,"to":27,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":13,"to":17,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true},{"from":17,"to":22,"color":{"color":"#ccc","opacity":0.6},"width":1,"dashes":true}])
     },{
       physics:{barnesHut:{gravitationalConstant:-5000,springLength:130},stabilization:{iterations:200,fit:true}},
       edges:{smooth:{type:'continuous'}},
@@ -736,7 +900,7 @@
     data: {
       labels: ["animals","technology","food","sports","music"],
       datasets: [{ label: 'Clique Máximo', data: [4,4,4,4,3],
-        backgroundColor: '#4E79A7cc', borderColor: '#4E79A7', borderWidth: 2, borderRadius: 6 }]
+        backgroundColor: '#2a78d6cc', borderColor: '#2a78d6', borderWidth: 2, borderRadius: 6 }]
     },
     options: {
       responsive: true,
@@ -751,7 +915,7 @@
     data: {
       labels: ["animals","technology","food","sports","music"],
       datasets: [{ label: 'Alcance Agregado', data: [1201515,851826,842877,538537,655851],
-        backgroundColor: '#F28E2Bcc', borderColor: '#F28E2B', borderWidth: 2, borderRadius: 6 }]
+        backgroundColor: '#eb6834cc', borderColor: '#eb6834', borderWidth: 2, borderRadius: 6 }]
     },
     options: {
       responsive: true,
@@ -761,15 +925,47 @@
     }
   });
 
+  new Chart(document.getElementById('chart-adoption'), {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'Curva p = 1 − (1 − q)^k', type: 'line', data: [{"x":1,"y":0.15},{"x":2,"y":0.2775},{"x":3,"y":0.3859},{"x":4,"y":0.478},{"x":5,"y":0.5563},{"x":6,"y":0.6229}],
+          borderColor: '#2b6cb0', backgroundColor: '#2b6cb0', borderWidth: 2,
+          pointRadius: 0, tension: 0.25, fill: false, order: 2 },
+        { label: 'Categorias (clique atual)', data: [{"x":4,"y":0.478,"label":"Animals"},{"x":4,"y":0.478,"label":"Technology"},{"x":4,"y":0.478,"label":"Food"},{"x":4,"y":0.478,"label":"Sports"},{"x":3,"y":0.3859,"label":"Music"}],
+          backgroundColor: '#eb6834', borderColor: '#b34a1e', pointRadius: 6,
+          pointHoverRadius: 8, showLine: false, order: 1 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'Curva de Adesão por Prova Social (q = 15%)', font: { size: 14 } },
+        legend: { display: true, position: 'bottom' },
+        tooltip: { callbacks: { label: function(ctx) {
+          var d = ctx.raw; var pct = (d.y * 100).toFixed(1) + '%';
+          return (d.label ? d.label + ': ' : '') + 'k=' + d.x + ' → ' + pct;
+        } } }
+      },
+      scales: {
+        x: { type: 'linear', min: 0, ticks: { stepSize: 1 },
+             title: { display: true, text: 'k = tamanho do clique (nº de endossos)' } },
+        y: { beginAtZero: true, suggestedMax: 1,
+             ticks: { callback: function(v) { return Math.round(v * 100) + '%'; } },
+             title: { display: true, text: 'Adesão estimada' } }
+      }
+    }
+  });
+
   new Chart(document.getElementById('chart-timing'), {
     type: 'bar',
     data: {
       labels: ["Animals","Technology","Food","Sports","Music"],
       datasets: [{
         label: 'Tempo do solver (ms)',
-        data: [233.65,19.823,24.584,891.285,0.181],
-        backgroundColor: '#4E79A7cc',
-        borderColor: '#4E79A7',
+        data: [288.306,32.137,30.296,1127.863,0.348],
+        backgroundColor: '#2a78d6cc',
+        borderColor: '#2a78d6',
         borderWidth: 2,
         borderRadius: 6
       }]
@@ -782,6 +978,70 @@
         legend: { display: false }
       },
       scales: { x: { beginAtZero: true, title: { display: true, text: 'Milissegundos' } } }
+    }
+  });
+  
+  new Chart(document.getElementById('chart-bench-time'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'Força bruta (exato)', data: [{"x":6,"y":0.09206999999999539},{"x":8,"y":0.3742200000000082},{"x":10,"y":0.6345100000000059},{"x":12,"y":2.4049000000000036},{"x":14,"y":9.865489999999994},{"x":16,"y":44.667999999999985},{"x":18,"y":202.92616000000004},{"x":20,"y":878.88021}],
+        borderColor: '#2a78d6', backgroundColor: '#2a78d6', borderWidth: 2, pointRadius: 3, tension: 0.2 },
+      { label: 'Guloso (heurística)', data: [{"x":6,"y":0.028789999999997918},{"x":8,"y":0.006629999999995561},{"x":10,"y":0.007940000000002102},{"x":12,"y":0.01328000000000884},{"x":14,"y":0.015479999999990923},{"x":16,"y":0.015610000000015134},{"x":18,"y":0.018309999999974024},{"x":20,"y":0.019209999999930005}],
+        borderColor: '#eb6834', backgroundColor: '#eb6834', borderWidth: 2, pointRadius: 3, tension: 0.2 }
+    ] },
+    options: {
+      responsive: true, parsing: false,
+      plugins: {
+        title: { display: true, text: 'Tempo médio × tamanho de entrada (escala log)', font: { size: 14 } },
+        legend: { display: true, position: 'bottom' },
+        tooltip: { callbacks: { label: function(ctx){ return ctx.dataset.label + ': n=' + ctx.raw.x + ' → ' + ctx.raw.y.toFixed(3) + ' ms'; } } }
+      },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'n (vértices do grafo)' }, ticks: { stepSize: 2 } },
+        y: { type: 'logarithmic', title: { display: true, text: 'Tempo do solver (ms, log)' } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('chart-bench-quality'), {
+    type: 'line',
+    data: { datasets: [
+      { label: '% de acerto do ótimo', data: [{"x":6,"y":90},{"x":8,"y":70},{"x":10,"y":50},{"x":12,"y":80},{"x":14,"y":80},{"x":16,"y":50},{"x":18,"y":60},{"x":20,"y":70}],
+        borderColor: '#1baf7a', backgroundColor: '#1baf7a', borderWidth: 2, pointRadius: 3, tension: 0.2, fill: false }
+    ] },
+    options: {
+      responsive: true, parsing: false,
+      plugins: {
+        title: { display: true, text: 'Qualidade do guloso: acerto do ótimo por n', font: { size: 14 } },
+        legend: { display: false },
+        tooltip: { callbacks: { label: function(ctx){ return 'n=' + ctx.raw.x + ' → ' + ctx.raw.y + '% ótimo'; } } }
+      },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'n (vértices do grafo)' }, ticks: { stepSize: 2 } },
+        y: { beginAtZero: true, suggestedMax: 100, title: { display: true, text: '% de runs com clique ótimo' }, ticks: { callback: function(v){ return v + '%'; } } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('chart-bench-tradeoff'), {
+    type: 'scatter',
+    data: { datasets: [
+      { label: 'Guloso ótimo', data: [{"x":2.8060512024814646,"y":100,"n":6,"seed":1},{"x":0.5694789081887729,"y":100,"n":6,"seed":3},{"x":3.680232558137229,"y":100,"n":6,"seed":4},{"x":6.179487179505866,"y":100,"n":6,"seed":5},{"x":11.703703703694346,"y":100,"n":6,"seed":6},{"x":12.214285714251638,"y":100,"n":6,"seed":7},{"x":16.17021276609769,"y":100,"n":6,"seed":8},{"x":6.604938271592462,"y":100,"n":6,"seed":9},{"x":11.352941176540085,"y":100,"n":6,"seed":10},{"x":115.42465753446002,"y":100,"n":8,"seed":1},{"x":48.35593220341629,"y":100,"n":8,"seed":2},{"x":46.000000000028905,"y":100,"n":8,"seed":3},{"x":58.18965517275935,"y":100,"n":8,"seed":4},{"x":29.11940298521493,"y":100,"n":8,"seed":6},{"x":47.8305084746091,"y":100,"n":8,"seed":7},{"x":40.343283581951276,"y":100,"n":8,"seed":10},{"x":195.57142857155617,"y":100,"n":10,"seed":1},{"x":97.80952380958503,"y":100,"n":10,"seed":2},{"x":62.06578947348049,"y":100,"n":10,"seed":5},{"x":54.29999999996508,"y":100,"n":10,"seed":7},{"x":58.614285714244765,"y":100,"n":10,"seed":8},{"x":113.60698689959979,"y":100,"n":12,"seed":1},{"x":211.52212389369913,"y":100,"n":12,"seed":2},{"x":207.31034482781737,"y":100,"n":12,"seed":4},{"x":181.6929133858948,"y":100,"n":12,"seed":5},{"x":182.03906249961264,"y":100,"n":12,"seed":7},{"x":195.81355932213842,"y":100,"n":12,"seed":8},{"x":253.86666666580192,"y":100,"n":12,"seed":9},{"x":204.22033898217566,"y":100,"n":12,"seed":10},{"x":457.4766355146275,"y":100,"n":14,"seed":2},{"x":656.4109589053193,"y":100,"n":14,"seed":3},{"x":667.2428571423778,"y":100,"n":14,"seed":4},{"x":691.5447761199157,"y":100,"n":14,"seed":5},{"x":725.2183098612104,"y":100,"n":14,"seed":6},{"x":775.3722627753269,"y":100,"n":14,"seed":8},{"x":622.274509802916,"y":100,"n":14,"seed":9},{"x":502.7944444436311,"y":100,"n":14,"seed":10},{"x":2907.5947712371285,"y":100,"n":16,"seed":1},{"x":2700.696202529434,"y":100,"n":16,"seed":4},{"x":2904.423841045189,"y":100,"n":16,"seed":6},{"x":2876.05882352476,"y":100,"n":16,"seed":8},{"x":3218.4967320209357,"y":100,"n":16,"seed":9},{"x":12450.952381044588,"y":100,"n":18,"seed":2},{"x":12501.011764667091,"y":100,"n":18,"seed":3},{"x":10573.77659584126,"y":100,"n":18,"seed":5},{"x":7499.608058679222,"y":100,"n":18,"seed":6},{"x":12349.082840179808,"y":100,"n":18,"seed":8},{"x":11664.824561384645,"y":100,"n":18,"seed":10},{"x":43679.73762391027,"y":100,"n":20,"seed":1},{"x":46324.10106425291,"y":100,"n":20,"seed":3},{"x":44514.18274150146,"y":100,"n":20,"seed":4},{"x":45437.72395897728,"y":100,"n":20,"seed":5},{"x":44658.810257726676,"y":100,"n":20,"seed":6},{"x":50982.24725153257,"y":100,"n":20,"seed":7},{"x":46707.91005508221,"y":100,"n":20,"seed":10}],
+        backgroundColor: '#eb6834', borderColor: '#eb6834', pointRadius: 5, pointHoverRadius: 7 },
+      { label: 'Guloso subótimo (mais rápido, clique menor)', data: [{"x":2.839805825241553,"y":66.7,"n":6,"seed":2},{"x":65.88461538483345,"y":66.7,"n":8,"seed":5},{"x":57.84905660340488,"y":66.7,"n":8,"seed":8},{"x":48.58888888880959,"y":66.7,"n":8,"seed":9},{"x":69.428571428613,"y":75,"n":10,"seed":3},{"x":68.00000000000738,"y":66.7,"n":10,"seed":4},{"x":62.44155844155834,"y":75,"n":10,"seed":6},{"x":55.000000000130264,"y":66.7,"n":10,"seed":9},{"x":66.18421052609692,"y":66.7,"n":10,"seed":10},{"x":189.74999999992076,"y":80,"n":12,"seed":3},{"x":156.2000000000368,"y":75,"n":12,"seed":6},{"x":619.4545454545605,"y":75,"n":14,"seed":1},{"x":786.6081081091853,"y":80,"n":14,"seed":7},{"x":2831.894039742365,"y":80,"n":16,"seed":2},{"x":2817.0189873394647,"y":80,"n":16,"seed":3},{"x":2821.0061349691355,"y":75,"n":16,"seed":5},{"x":2823.3396226436766,"y":80,"n":16,"seed":7},{"x":2733.0432098721253,"y":75,"n":16,"seed":10},{"x":12410.155688696559,"y":75,"n":18,"seed":1},{"x":11705.368421033698,"y":80,"n":18,"seed":4},{"x":10967.867403174709,"y":80,"n":18,"seed":7},{"x":10979.439306372702,"y":80,"n":18,"seed":9},{"x":44884.078125636144,"y":80,"n":20,"seed":2},{"x":45595.22164703576,"y":75,"n":20,"seed":8},{"x":45179.98947313055,"y":80,"n":20,"seed":9}],
+        backgroundColor: '#eb6834', borderColor: '#d03b3b', borderWidth: 2, pointRadius: 7, pointHoverRadius: 9 }
+    ] },
+    options: {
+      responsive: true, parsing: false,
+      plugins: {
+        title: { display: true, text: 'Trade-off: aceleração × qualidade (cada ponto = um experimento)', font: { size: 14 } },
+        legend: { display: true, position: 'bottom' },
+        tooltip: { callbacks: { label: function(ctx){ var d = ctx.raw; return (ctx.datasetIndex === 1 ? 'subótimo ' : 'ótimo ') + 'n=' + d.n + ' seed=' + d.seed + ': ' + d.x.toFixed(1) + '× mais rápido, qualidade ' + d.y.toFixed(0) + '%'; } } }
+      },
+      scales: {
+        x: { type: 'logarithmic', title: { display: true, text: 'Aceleração vs força bruta (×, log)' } },
+        y: { beginAtZero: true, suggestedMax: 105, title: { display: true, text: 'Qualidade |C|guloso / |C|bruta (%)' }, ticks: { callback: function(v){ return v + '%'; } } }
+      }
     }
   });
 </script>

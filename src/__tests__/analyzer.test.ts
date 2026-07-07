@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { ViralAnalyzer } from "../services/analyzer.js";
+import { BruteSolver } from "../services/solver.js";
 import type { ProblemInstance } from "../models/models.js";
 
 function buildInteractions(
@@ -291,6 +292,66 @@ describe("ViralAnalyzer", () => {
       expect(result.edges).toHaveLength(1);
       const [edge] = result.edges;
       expect([edge.from, edge.to]).toEqual(expect.arrayContaining([0, 1]));
+    });
+  });
+
+  describe("analyze — curva de adesão (prova social)", () => {
+    function k3TechInstance(): ProblemInstance {
+      return {
+        users: [
+          { id: 0, name: "U1", reach: 1000, preferences: { tech: true } },
+          { id: 1, name: "U2", reach: 1000, preferences: { tech: true } },
+          { id: 2, name: "U3", reach: 1000, preferences: { tech: true } },
+        ],
+        categories: ["tech"],
+        interactions: buildInteractions([0, 1, 2], {
+          "0,1": 0.9,
+          "0,2": 0.9,
+          "1,2": 0.9,
+        }),
+        threshold: 0.6,
+      };
+    }
+
+    it("aplica p = 1 − (1 − q)^k com q padrão (0.15) para clique de tamanho 3", () => {
+      const [result] = new ViralAnalyzer().analyze(k3TechInstance());
+      expect(result.cliqueSize).toBe(3);
+      expect(result.adoptionProbability).toBeCloseTo(1 - 0.85 ** 3, 6); // ≈ 0.385875
+    });
+
+    it("respeita o q injetado no construtor", () => {
+      const analyzerHalf = new ViralAnalyzer(new BruteSolver(), 0.5);
+      const [result] = analyzerHalf.analyze(k3TechInstance());
+      expect(result.adoptionProbability).toBeCloseTo(1 - 0.5 ** 3, 6); // 0.875
+    });
+
+    it("cresce com o tamanho do clique (mais endossos ⇒ mais adesão)", () => {
+      const twoUsers: ProblemInstance = {
+        users: [
+          { id: 0, name: "U1", reach: 1000, preferences: { tech: true } },
+          { id: 1, name: "U2", reach: 1000, preferences: { tech: true } },
+        ],
+        categories: ["tech"],
+        interactions: buildInteractions([0, 1], { "0,1": 0.9 }),
+        threshold: 0.6,
+      };
+      const p2 = new ViralAnalyzer().analyze(twoUsers)[0].adoptionProbability;
+      const p3 = new ViralAnalyzer().analyze(k3TechInstance())[0]
+        .adoptionProbability;
+      expect(p3).toBeGreaterThan(p2);
+    });
+
+    it("adesão é 0 para categoria sem clique", () => {
+      const empty: ProblemInstance = {
+        users: [
+          { id: 0, name: "U1", reach: 1000, preferences: { tech: false } },
+        ],
+        categories: ["tech"],
+        interactions: new Map(),
+        threshold: 0.6,
+      };
+      const [result] = new ViralAnalyzer().analyze(empty);
+      expect(result.adoptionProbability).toBe(0);
     });
   });
 

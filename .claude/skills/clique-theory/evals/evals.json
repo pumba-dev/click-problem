@@ -17,7 +17,7 @@
     },
     {
       "id": 1,
-      "prompt": "Qual é a complexidade do nosso solver de força bruta (CliqueSolver.solve) e por quê? Explique melhor caso, pior caso e o efeito do early exit.",
+      "prompt": "Qual é a complexidade do nosso solver de força bruta (BruteSolver.solve) e por quê? Explique melhor caso, pior caso e o efeito do early exit.",
       "expected_output": "Resposta correta e específica do projeto para: solver-complexity",
       "files": [],
       "expectations": [

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Graph } from "../models/graph.js";
-import { CliqueSolver } from "../services/solver.js";
+import { BruteSolver } from "../services/solver.js";
 
 function makeCompleteGraph(vertices: number[]): Graph {
   const g = new Graph(vertices);
@@ -12,34 +12,34 @@ function makeCompleteGraph(vertices: number[]): Graph {
   return g;
 }
 
-describe("CliqueSolver", () => {
-  const solver = new CliqueSolver();
+describe("BruteSolver", () => {
+  const solver = new BruteSolver();
 
   describe("isClique", () => {
     it("subconjunto vazio é clique", () => {
       const g = new Graph([0, 1]);
-      expect(CliqueSolver.isClique(g, [])).toBe(true);
+      expect(BruteSolver.isClique(g, [])).toBe(true);
     });
 
     it("vértice único é clique", () => {
       const g = new Graph([0]);
-      expect(CliqueSolver.isClique(g, [0])).toBe(true);
+      expect(BruteSolver.isClique(g, [0])).toBe(true);
     });
 
     it("par de vértices conectados é clique", () => {
       const g = new Graph([0, 1]);
       g.addEdge(0, 1);
-      expect(CliqueSolver.isClique(g, [0, 1])).toBe(true);
+      expect(BruteSolver.isClique(g, [0, 1])).toBe(true);
     });
 
     it("par de vértices não conectados não é clique", () => {
       const g = new Graph([0, 1]);
-      expect(CliqueSolver.isClique(g, [0, 1])).toBe(false);
+      expect(BruteSolver.isClique(g, [0, 1])).toBe(false);
     });
 
     it("K3 completo é clique", () => {
       const g = makeCompleteGraph([0, 1, 2]);
-      expect(CliqueSolver.isClique(g, [0, 1, 2])).toBe(true);
+      expect(BruteSolver.isClique(g, [0, 1, 2])).toBe(true);
     });
 
     it("triângulo com uma aresta faltando não é clique", () => {
@@ -47,23 +47,23 @@ describe("CliqueSolver", () => {
       g.addEdge(0, 1);
       g.addEdge(0, 2);
       // aresta 1-2 ausente
-      expect(CliqueSolver.isClique(g, [0, 1, 2])).toBe(false);
+      expect(BruteSolver.isClique(g, [0, 1, 2])).toBe(false);
     });
   });
 
   describe("combinations", () => {
     it("k=0 gera exatamente uma combinação vazia", () => {
-      const result = [...CliqueSolver.combinations([1, 2, 3], 0)];
+      const result = [...BruteSolver.combinations([1, 2, 3], 0)];
       expect(result).toEqual([[]]);
     });
 
     it("k=1 gera um subarray singleton por elemento", () => {
-      const result = [...CliqueSolver.combinations([1, 2, 3], 1)];
+      const result = [...BruteSolver.combinations([1, 2, 3], 1)];
       expect(result).toEqual([[1], [2], [3]]);
     });
 
     it("k=2 gera C(3,2)=3 pares", () => {
-      const result = [...CliqueSolver.combinations([0, 1, 2], 2)];
+      const result = [...BruteSolver.combinations([0, 1, 2], 2)];
       expect(result).toHaveLength(3);
       expect(result).toEqual(
         expect.arrayContaining([
@@ -75,29 +75,29 @@ describe("CliqueSolver", () => {
     });
 
     it("k igual ao tamanho do array gera um único subconjunto completo", () => {
-      const result = [...CliqueSolver.combinations([4, 5, 6], 3)];
+      const result = [...BruteSolver.combinations([4, 5, 6], 3)];
       expect(result).toEqual([[4, 5, 6]]);
     });
 
     it("k maior que o tamanho do array não gera nenhuma combinação", () => {
-      const result = [...CliqueSolver.combinations([1, 2], 3)];
+      const result = [...BruteSolver.combinations([1, 2], 3)];
       expect(result).toHaveLength(0);
     });
 
     it("gera C(5,3)=10 combinações", () => {
       const k = 3;
-      const result = [...CliqueSolver.combinations([0, 1, 2, 3, 4], k)];
+      const result = [...BruteSolver.combinations([0, 1, 2, 3, 4], k)];
       expect(result).toHaveLength(10);
     });
 
     it("cada combinação tem exatamente k elementos", () => {
-      for (const combo of CliqueSolver.combinations([0, 1, 2, 3], 2)) {
+      for (const combo of BruteSolver.combinations([0, 1, 2, 3], 2)) {
         expect(combo).toHaveLength(2);
       }
     });
 
     it("elementos dentro de cada combinação mantêm a ordem relativa do array original", () => {
-      for (const combo of CliqueSolver.combinations([0, 1, 2, 3], 3)) {
+      for (const combo of BruteSolver.combinations([0, 1, 2, 3], 3)) {
         for (let i = 0; i < combo.length - 1; i++) {
           expect(combo[i]).toBeLessThan(combo[i + 1]);
         }
@@ -171,7 +171,7 @@ describe("CliqueSolver", () => {
       expect(clique).toEqual(expect.arrayContaining([0, 1, 2]));
     });
 
-    it("resultado é sempre um clique válido — verificado via CliqueSolver.isClique", () => {
+    it("resultado é sempre um clique válido — verificado via BruteSolver.isClique", () => {
       const g = new Graph([0, 1, 2, 3, 4]);
       g.addEdge(0, 1);
       g.addEdge(0, 2);
@@ -179,7 +179,7 @@ describe("CliqueSolver", () => {
       g.addEdge(2, 3);
       g.addEdge(3, 4);
       const { clique } = solver.solve(g);
-      expect(CliqueSolver.isClique(g, clique)).toBe(true);
+      expect(BruteSolver.isClique(g, clique)).toBe(true);
     });
 
     it("grafo estrela: clique máximo tem tamanho 2", () => {

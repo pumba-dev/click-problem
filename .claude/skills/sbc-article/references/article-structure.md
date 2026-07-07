@@ -33,13 +33,18 @@ Fonte: skill **clique-theory**, `references/np-completeness.md`. Se a disciplina
 prova completa no corpo (atividade 5), traga as duas direções da equivalência.
 
 ### 3. Aplicação Prática: Engajamento Viral
-Intuição comportamental do reforço cruzado entre audiências; o score $s_{uv}$ como grau
-de conexão entre redes; por que um clique é o seed ideal. Fonte: skill
+Intuição comportamental: **prova social / efeito manada** (*bandwagon*) — vários
+criadores endossando o mesmo produto para a **mesma audiência** elevam a adesão. O score
+$s_{uv}$ como grau de **sobreposição de audiência**; por que o **maior clique** maximiza
+o reforço. Cite a base comportamental: `\cite{cialdini:2006}`, `\cite{leibenstein:1950}`,
+`\cite{asch:1951}`, `\cite{zajonc:1968}` (ver `bibliography.md`). Fonte: skill
 **viral-application**.
 
 ### 4. Modelagem Formal
 $U$, $A$, $\text{pref}$, $\text{reach}$, $G_a=(V_a,E_a)$, aresta sse $s_{uv}\ge\tau$,
-$C^*_a$, $R_a$, regra de ranking (tamanho do clique; desempate por alcance). Fonte:
+$C^*_a$, $R_a$, regra de ranking (tamanho do clique; desempate por alcance). Inclua a
+**curva de adesão** $p=1-(1-q)^k$ ($k=|C^*_a|$, $q$ = adesão por endosso único, constante
+global) que liga o tamanho do clique à taxa de adesão e motiva maximizar $|C^*_a|$. Fonte:
 skill **viral-application**, `references/modeling.md`.
 
 ### 5. Metodologia
@@ -53,24 +58,28 @@ Módulos (models, generator, graph, solver, analyzer, report). Fonte: skill
 **clique-codebase**. Cobrir:
 - **6.x Algoritmo de Clique Máximo (baseline):** força bruta com early exit,
   $O(2^n\cdot n^2)$, espaço $O(n)$.
-- **6.y Heurística (A FAZER — atividade 6):** estratégia do algoritmo escolhido
-  (Bron-Kerbosch com pivoteamento e/ou guloso), sua complexidade e características.
-  Contraste explicitamente com o baseline (exato × aproximado, garantia de ótimo).
+- **6.y Heurística (FEITA — atividade 6):** `GreedySolver` — guloso por grau
+  decrescente (desempate por id), sem retrocesso, $O(n^2)$, espaço $O(n)$,
+  determinístico. Já redigida no `.tex` (`\label{sec:heuristica}`). Contrasta com o
+  baseline (exato × aproximado, garantia de ótimo × não).
 
-### 7. Resultados (EXPANDIR — atividade 7)
-Hoje traz só a tabela da instância padrão (por categoria). Adicione:
+### 7. Resultados (FEITA — atividade 7)
+Traz a tabela da instância padrão (por categoria) **e** a subseção comparativa
+`\label{sec:comparativo}` baseline × heurística por tamanho de entrada, alimentada por
+`bench.json` (`npm run bench`, skill **clique-codebase**). O modelo abaixo documenta o
+formato caso queira regenerar/estender a tabela:
 - **Tabela comparativa por tamanho de entrada** ($n$ × tempo × cliqueSize) para baseline
   e heurística. Modelo:
 
 ```latex
 \begin{table}[h]\centering
-\caption{Baseline vs heurística por tamanho de entrada (média de 5 seeds, $\tau=0{,}6$)}
+\caption{Baseline vs heurística por tamanho de entrada (média de 10 seeds, $\tau=0{,}6$)}
 \label{tab:comparativo}
 \begin{tabular}{rrrrr}
 \toprule
 $n$ & $t_{\text{bf}}$ (ms) & $t_{\text{heur}}$ (ms) & $|C|_{\text{bf}}$ & $|C|_{\text{heur}}$ \\
 \midrule
-% preencher a partir de bench.csv (ver skill clique-codebase, references/extending.md)
+% preencher a partir de bench.json (gerado por npm run bench; ver skill clique-codebase)
 \bottomrule
 \end{tabular}
 \end{table}
@@ -86,11 +95,11 @@ Os dados saem do harness em skill **clique-codebase**, `references/extending.md`
 Exporte gráficos como PDF/PNG e inclua com `\includegraphics` (pacote `graphicx` já está
 no preâmbulo).
 
-### 8. Conclusão (AJUSTAR)
-Deve conter, explicitamente: resultados esperados, resultados obtidos e a **comparação
-baseline × heurística** em desempenho e qualidade. Reposicione a heurística de "trabalho
-futuro" para "resultado entregue". Trabalhos futuros remanescentes: grafos ponderados,
-metaheurísticas adicionais, dados reais.
+### 8. Conclusão (FEITA)
+Contém: resultados esperados × obtidos e a **comparação baseline × heurística** em
+desempenho e qualidade; a heurística consta como **resultado entregue**. Trabalhos futuros
+remanescentes: algoritmos exatos melhores (Bron-Kerbosch) e metaheurísticas, grafos
+ponderados, refinamento da curva de adesão, dados reais.
 
 ## Checklist final antes de entregar
 

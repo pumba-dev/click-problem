@@ -11,7 +11,7 @@
 
 ### 1.1 Propósito
 
-Este documento especifica os requisitos funcionais e não funcionais do sistema **Click Problem**, uma ferramenta educacional que modela a identificação do grupo mais coeso de usuários em redes sociais como instância do Problema do Clique Máximo (NP-Completo). O documento serve como referência para desenvolvimento, teste e manutenção do sistema.
+Este documento especifica os requisitos funcionais e não funcionais do sistema **Click Problem**, uma ferramenta educacional que modela a seleção do melhor grupo de influenciadores para uma campanha por **prova social** em redes sociais — o maior conjunto de criadores com audiências sobrepostas — como instância do Problema do Clique Máximo (NP-Completo). O documento serve como referência para desenvolvimento, teste e manutenção do sistema.
 
 ### 1.2 Escopo
 
@@ -23,7 +23,10 @@ O sistema recebe parâmetros de configuração, gera uma rede social sintética,
 |---|---|
 | **Clique** | Subconjunto de vértices de um grafo no qual todo par de vértices está conectado por uma aresta |
 | **Clique Máximo** | Clique de maior cardinalidade em um grafo dado |
-| **Seed Viral** | Grupo inicial de influenciadores de quem parte uma campanha de propagação de conteúdo |
+| **Grupo de Campanha (Seed)** | Conjunto de criadores selecionado para veicular uma campanha; no modelo, o clique máximo de uma categoria |
+| **Efeito Manada / Prova Social** | Fenômeno comportamental: a adesão de um usuário cresce quando vários criadores que ele segue endossam o mesmo produto (*bandwagon*) |
+| **Curva de Adesão** | Modelo da probabilidade de adesão em função do nº de endossos: `p = 1 − (1 − q)^k`, onde `k` = tamanho do clique e `q` = probabilidade de adesão por endosso único (constante global) |
+| **Score de Interação** | Grau de sobreposição de audiência entre dois criadores (∈ [0,1]); alto ⇒ provável que a mesma pessoa siga os dois |
 | **Alcance (Reach)** | Número de seguidores de um usuário, representando seu potencial de audiência orgânica |
 | **Threshold** | Limiar mínimo de score de interação para que dois usuários sejam conectados por uma aresta |
 | **PRNG** | Pseudo-Random Number Generator — gerador de números pseudo-aleatórios |
@@ -36,6 +39,8 @@ O sistema recebe parâmetros de configuração, gera uma rede social sintética,
 - Karp, R. M. "Reducibility among combinatorial problems." _Complexity of Computer Computations_, 1972.
 - Cormen, T. et al. _Introduction to Algorithms_, 4ª ed. MIT Press, 2022. §34.5.1.
 - Bron, C.; Kerbosch, J. "Finding all cliques of an undirected graph." _Communications of the ACM_, 1973.
+- Cialdini, R. B. _Influence: The Psychology of Persuasion_. Harper Business, 2006. (prova social)
+- Leibenstein, H. "Bandwagon, Snob, and Veblen Effects in the Theory of Consumers' Demand." _QJE_, 1950. (efeito manada)
 
 ---
 
@@ -64,7 +69,7 @@ O Click Problem é um sistema de linha de comando (CLI) independente, sem depend
 ### 2.4 Restrições Gerais
 
 - O algoritmo de busca exaustiva é educacional e não adequado para produção com instâncias grandes.
-- `numUsers` acima de ~25 pode resultar em tempos de execução impraticáveis dado o crescimento O(2ⁿ · n²).
+- Um grafo por categoria acima de ~25 vértices elegíveis pode tornar o baseline impraticável (O(2ⁿ · n²)); com os parâmetros padrão (30 usuários, prefProb 0.5) o maior |V_a| fica ≤ 20. Para escala, use o `GreedySolver`.
 - Requer Node.js 18+ para execução.
 
 ---
@@ -137,7 +142,7 @@ O Click Problem é um sistema de linha de comando (CLI) independente, sem depend
 
 ### RF-06 — Exibição de resultados no terminal
 
-**Descrição:** Ao final da execução, o sistema deve imprimir no terminal, para cada categoria (em ordem de ranking): número de vértices, número de arestas, tamanho do clique máximo, membros do clique com seus alcances, e alcance total. Deve destacar a melhor categoria para seed viral.
+**Descrição:** Ao final da execução, o sistema deve imprimir no terminal, para cada categoria (em ordem de ranking): número de vértices, número de arestas, tamanho do clique máximo, membros do clique com seus alcances, alcance total e a adesão estimada (curva de prova social). Deve destacar a melhor categoria para a campanha de reforço.
 
 ---
 
@@ -172,9 +177,9 @@ O Click Problem é um sistema de linha de comando (CLI) independente, sem depend
 
 ### RNF-01 — Desempenho
 
-**Descrição:** Para `numUsers ≤ 20` e `prefProb ≤ 0.7`, a execução completa (geração + análise + relatório) deve terminar em menos de 30 segundos em hardware de uso geral.
+**Descrição:** Com os parâmetros padrão (`numUsers = 30`, `prefProb = 0.5`), em que o maior grafo por categoria tem `|V_a| ≤ 20`, a execução completa (geração + análise + relatório) deve terminar em menos de 30 segundos em hardware de uso geral. O fator determinante do custo O(2ⁿ · n²) é o número de usuários elegíveis por categoria (`|V_a|`), não `numUsers`.
 
-**Justificativa:** O algoritmo é O(2ⁿ · n²) por categoria. Acima de ~25 usuários elegíveis por grafo, o tempo pode ser proibitivo; essa limitação deve ser documentada.
+**Justificativa:** O baseline é O(2ⁿ · n²) por categoria. Acima de ~25 usuários elegíveis por grafo (`|V_a|`), o tempo pode ser proibitivo — nesses casos use o `GreedySolver` (O(n²)); essa limitação deve ser documentada.
 
 ---
 
@@ -203,7 +208,7 @@ src/
 
 ### RNF-04 — Testabilidade
 
-**Descrição:** Todas as classes de serviço (`Graph`, `CliqueSolver`, `InstanceGenerator`, `ViralAnalyzer`) devem possuir cobertura de testes unitários utilizando o framework **vitest**, cobrindo casos normais, limítrofes e de erro.
+**Descrição:** Todas as classes de serviço (`Graph`, `BruteSolver`, `InstanceGenerator`, `ViralAnalyzer`) devem possuir cobertura de testes unitários utilizando o framework **vitest**, cobrindo casos normais, limítrofes e de erro.
 
 **Comando:** `npm test`
 
@@ -280,7 +285,7 @@ O usuário interage com o sistema exclusivamente por meio do arquivo `src/config
 ### UC-04 — Rodar testes unitários
 
 **Ator:** Desenvolvedor  
-**Fluxo:** Após modificar a lógica do `CliqueSolver`, o desenvolvedor executa `npm test`. Os testes validam que o solver retorna cliques válidos e máximos nos casos conhecidos, garantindo que a modificação não introduziu regressões.
+**Fluxo:** Após modificar a lógica do `BruteSolver`, o desenvolvedor executa `npm test`. Os testes validam que o solver retorna cliques válidos e máximos nos casos conhecidos, garantindo que a modificação não introduziu regressões.
 
 ---
 
@@ -289,4 +294,4 @@ O usuário interage com o sistema exclusivamente por meio do arquivo `src/config
 | Versão | Data | Descrição |
 |---|---|---|
 | 1.0 | 2026-04-29 | Versão inicial — cobre todos os requisitos da implementação atual |
-| 1.1 | 2026-04-30 | Adição da aba Estatísticas (RF-07); movimentação de `Graph` para `src/models/`; `CliqueSolver.solve()` passa a retornar `SolveResult`; novos tipos `SimulationStats`, `CategoryTimingEntry`; `ReportGenerator.buildStats()` centraliza cálculo de métricas |
+| 1.1 | 2026-04-30 | Adição da aba Estatísticas (RF-07); movimentação de `Graph` para `src/models/`; `BruteSolver.solve()` passa a retornar `SolveResult`; novos tipos `SimulationStats`, `CategoryTimingEntry`; `ReportGenerator.buildStats()` centraliza cálculo de métricas |
